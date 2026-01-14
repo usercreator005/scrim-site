@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("paymentSS", paymentSS.files[0]);
 
     try {
-      const res = await fetch("http://localhost:3000/submit", {
+      const res = await fetch("/submit", {
         method: "POST",
         body: formData
       });
