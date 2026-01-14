@@ -118,3 +118,21 @@ button.active {
     font-size: 14px;
   }
 }
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #22c55e;
+  color: #000;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: none;
+  z-index: 9999;
+}
+
+#toast.error {
+  background: #ef4444;
+  color: #fff;
+  }
