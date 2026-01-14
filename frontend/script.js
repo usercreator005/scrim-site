@@ -85,6 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("paymentSS", paymentSS.files[0]);
 
     try {
+  submitBtn.disabled = true;
+  const originalText = submitBtn.innerText;
+  submitBtn.innerText = "Submitting...";
+
   const res = await fetch("/submit", {
     method: "POST",
     body: formData
@@ -96,13 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /* RESET FORM */
   document.getElementById("scrimForm").reset();
 
-  /* RESET STATES */
   selectedTime = null;
   selectedFee = null;
 
-  /* RESET UI */
   timeButtons.forEach(b => b.classList.remove("active"));
-
   feeButtons.forEach(b => {
     b.classList.remove("active");
     b.disabled = true;
@@ -111,10 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
   teamName.disabled = true;
   whatsapp.disabled = true;
   paymentSS.disabled = true;
-  submitBtn.disabled = true;
 
 } catch (err) {
   showToast("Server error", true);
+} finally {
+  submitBtn.disabled = true;   // keep disabled until new selection
+  submitBtn.innerText = "Submit";
 }
   });
 
