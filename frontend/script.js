@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.execCommand("copy");
     document.body.removeChild(temp);
 
-    alert("UPI Copied: " + upi);
+    showToast("UPI Copied: " + upi);
   };
 
   /* FORM SUBMIT */
@@ -63,17 +63,17 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     if (!selectedTime || !selectedFee) {
-      alert("Select time and fee");
+      showToast("Select time and fee");
       return;
     }
 
     if (whatsapp.value.length !== 10) {
-      alert("Enter valid WhatsApp number");
+      showToast("Enter valid WhatsApp number");
       return;
     }
 
     if (!paymentSS.files.length) {
-      alert("Upload payment screenshot");
+      showToast("Upload payment screenshot");
       return;
     }
 
@@ -91,12 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json();
-      alert(data.message);
+      showToast(data.message);
       document.getElementById("scrimForm").reset();
       location.reload();
 
     } catch (err) {
-      alert("Server error");
+      showToast("Server error", true);
     }
   });
 
