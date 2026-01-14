@@ -72,3 +72,15 @@ input {
   background: #2563eb;
 }
 
+button {
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.95);
+}
