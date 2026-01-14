@@ -10,8 +10,9 @@ function showToast(message, isError = false) {
     container = document.createElement("div");
     container.id = "toastContainer";
     container.style.position = "fixed";
-    container.style.bottom = "20px";
-    container.style.right = "20px";
+    container.style.top = "20px";            // Top-center
+    container.style.left = "50%";            // Horizontal center
+    container.style.transform = "translateX(-50%)"; // Center alignment
     container.style.zIndex = "9999";
     document.body.appendChild(container);
   }
