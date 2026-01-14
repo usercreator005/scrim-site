@@ -81,7 +81,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     }
 
     // 4️⃣ Time & Fee allow-list (anti-tampering)
-    const allowedTimes = ["12 PM", "3 PM", "6 PM", "9 PM"];
+    const allowedTimes = ["12:00 PM", "3:00 PM", "9:00 PM"];
     const allowedFees = ["₹20", "₹25", "₹30"];
 
     if (!allowedTimes.includes(time) || !allowedFees.includes(fee)) {
