@@ -85,39 +85,37 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("paymentSS", paymentSS.files[0]);
 
     try {
-      const res = await fetch("/submit", {
-        method: "POST",
-        body: formData
-      });
+  const res = await fetch("/submit", {
+    method: "POST",
+    body: formData
+  });
 
-      const data = await res.json();
-      showToast(data.message);
-      document.getElementById("scrimForm").reset();
-      const data = await res.json();
-showToast(data.message);
+  const data = await res.json();
+  showToast(data.message);
 
-/* RESET FORM */
-document.getElementById("scrimForm").reset();
+  /* RESET FORM */
+  document.getElementById("scrimForm").reset();
 
-/* RESET STATES */
-selectedTime = null;
-selectedFee = null;
+  /* RESET STATES */
+  selectedTime = null;
+  selectedFee = null;
 
-/* RESET UI */
-timeButtons.forEach(b => b.classList.remove("active"));
-feeButtons.forEach(b => {
-  b.classList.remove("active");
-  b.disabled = true;
-});
+  /* RESET UI */
+  timeButtons.forEach(b => b.classList.remove("active"));
 
-teamName.disabled = true;
-whatsapp.disabled = true;
-paymentSS.disabled = true;
-submitBtn.disabled = true;
+  feeButtons.forEach(b => {
+    b.classList.remove("active");
+    b.disabled = true;
+  });
 
-    } catch (err) {
-      showToast("Server error", true);
-    }
+  teamName.disabled = true;
+  whatsapp.disabled = true;
+  paymentSS.disabled = true;
+  submitBtn.disabled = true;
+
+} catch (err) {
+  showToast("Server error", true);
+}
   });
 
 });
