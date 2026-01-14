@@ -1,5 +1,5 @@
 async function loadRegistrations() {
-  const res = await fetch("http://localhost:3000/adminRegs");
+  const res = await fetch("https://scrim-backend.onrender.com/adminRegs");
   const data = await res.json();
   const tbody = document.getElementById("adminTable");
   tbody.innerHTML = "";
@@ -11,7 +11,7 @@ async function loadRegistrations() {
       <td>${reg.whatsapp}</td>
       <td>${reg.time}</td>
       <td>${reg.fee}</td>
-      <td><a href="http://localhost:3000/uploads/${reg.screenshot}" target="_blank">View</a></td>
+      <td><a href="https://scrim-backend.onrender.com/uploads/${reg.screenshot}" target="_blank">View</a></td>
       <td>${reg.status}</td>
       <td>
         <button onclick="adminAction(${i}, 'Accepted', '${reg.whatsapp}')">Accept</button>
@@ -24,7 +24,7 @@ async function loadRegistrations() {
 
 async function adminAction(i, status, whatsappNumber){
   // Backend me status update
-  await fetch(`http://localhost:3000/adminAction/${i}`,{
+  await fetch(`https://scrim-backend.onrender.com/adminAction/${i}`,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({status})
