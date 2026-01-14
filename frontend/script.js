@@ -93,7 +93,27 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       showToast(data.message);
       document.getElementById("scrimForm").reset();
-      location.reload();
+      const data = await res.json();
+showToast(data.message);
+
+/* RESET FORM */
+document.getElementById("scrimForm").reset();
+
+/* RESET STATES */
+selectedTime = null;
+selectedFee = null;
+
+/* RESET UI */
+timeButtons.forEach(b => b.classList.remove("active"));
+feeButtons.forEach(b => {
+  b.classList.remove("active");
+  b.disabled = true;
+});
+
+teamName.disabled = true;
+whatsapp.disabled = true;
+paymentSS.disabled = true;
+submitBtn.disabled = true;
 
     } catch (err) {
       showToast("Server error", true);
