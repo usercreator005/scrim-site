@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Fire Scrim</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>🎮 Free Fire Scrim Series 🎮</h1>
+  <div class="info">
+    <p><b>Entry Fee:</b> ₹20 / ₹25 / ₹30</p>
+    <p><b>Prize Pool:</b> ₹200 / ₹250 / ₹300</p>
+    <p><b>🏆 Prizes:</b></p>
+    <ul>
+      <li>🥇 1st: ₹80 / ₹100 / ₹120</li>
+      <li>🥈 2nd: ₹60 / ₹75 / ₹90</li>
+      <li>🥉 3rd: ₹40 / ₹50 / ₹60</li>
+      <li>🏅 4th: Next Lobby Free Entry</li>
+    </ul>
+    <p><b>🕒 Schedule:</b> 12:00 PM | 3:00 PM | 9:00 PM</p>
+    <p><b>Format:</b> Best of 3 Matches (B2B)</p>
+  </div>
+
+  <h2>⏰ Select Match Time</h2>
+  <div class="slots" id="timeSlots">
+    <button data-time="12:00 PM">12:00 PM</button>
+    <button data-time="3:00 PM">3:00 PM</button>
+    <button data-time="9:00 PM">9:00 PM</button>
+  </div>
+
+  <h2>💰 Select Entry Fee</h2>
+  <div class="fees" id="feeSlots">
+    <button disabled>₹20</button>
+    <button disabled>₹25</button>
+    <button disabled>₹30</button>
+  </div>
+
+  <h2>📝 Team Details</h2>
+  <form id="scrimForm">
+    <input type="text" id="teamName" placeholder="Enter Team Name" disabled>
+    <input type="tel" id="whatsapp" placeholder="WhatsApp Number" disabled>
+
+    <h2>💳 Payment</h2>
+<p><b>UPI ID:</b> 
+  <span id="upiText" style="user-select: all;">ff.scrim@upi</span>
+</p>
+
+<button type="button" onclick="copyUpiManual()">Copy UPI</button>
+    <p>OR</p>
+    <img src="qr.png" alt="QR Code" class="qr">
+    <p>Upload Payment Screenshot</p>
+    <input type="file" id="paymentSS" accept="image/*" disabled>
+
+    <button type="submit" id="submitBtn" disabled>SUBMIT</button>
+  </form>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

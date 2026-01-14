@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head><title>Admin Dashboard</title></head>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #ffcc00;
+      padding: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #555;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+      color: #ffcc00;
+    }
+    button {
+      padding: 5px 10px;
+      margin: 2px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    button.accept { background-color: #4CAF50; color: #fff; }
+    button.reject { background-color: #f44336; color: #fff; }
+    a { color: #ffcc00; text-decoration: none; }
+    @media(max-width:480px){
+      table, th, td { font-size: 12px; }
+      button { padding: 6px; margin: 1px; font-size: 12px; }
+    }
+  </style>
+<body>
+<script>
+if(localStorage.getItem("adminLogged") !== "yes"){
+  window.location.href = "login.html";
+}
+</script>
+
+<h1>Admin Dashboard</h1>
+<button onclick="logout()">Logout</button>
+
+<script>
+function logout(){
+  localStorage.removeItem("adminLogged");
+  window.location.href = "login.html";
+}
+</script>
+
+<table border="2">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>WhatsApp</th>
+      <th>Time</th>
+      <th>Fee</th>
+      <th>Payment Screenshot</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="adminTable"></tbody>
+</table>
+<script src="admin.js"></script>
+</body>
+</html>

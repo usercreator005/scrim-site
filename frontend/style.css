@@ -1,0 +1,74 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #fff;
+}
+
+.container {
+  padding: 15px;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.info {
+  background: #020617;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.slots, .fees {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  background: #1e293b;
+  color: white;
+}
+
+button.active {
+  background: #22c55e;
+}
+
+button:disabled {
+  background: #334155;
+  opacity: 0.6;
+}
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+
+.payment {
+  background: #020617;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.qr {
+  width: 100%;
+  max-width: 200px;
+  display: block;
+  margin: 10px auto;
+}
+
+#submitBtn {
+  width: 100%;
+  background: #2563eb;
+}
+

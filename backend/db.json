@@ -1,0 +1,76 @@
+{
+  "submissions": [
+    {
+      "id": 1768330909801,
+      "teamName": "IGL ESPORTS",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹20",
+      "screenshot": "1768330909754-1000097467.jpg",
+      "status": "Accepted"
+    },
+    {
+      "id": 1768331135146,
+      "teamName": "IGL ESPORTS",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹20",
+      "screenshot": "1768331135117-1000097469.jpg",
+      "status": "Accepted"
+    },
+    {
+      "id": 1768332421365,
+      "teamName": "MSG",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹25",
+      "screenshot": "1768332421291-Screenshot_20260113_225847.jpg",
+      "status": "Accepted"
+    },
+    {
+      "id": 1768332887101,
+      "teamName": "team a",
+      "whatsapp": "9926110413",
+      "time": "12:00 PM",
+      "fee": "₹20",
+      "screenshot": "1768332887083-Screenshot_20260113_231216.jpg",
+      "status": "Rejected"
+    },
+    {
+      "id": 1768357521427,
+      "teamName": "MSG",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹25",
+      "screenshot": "1768357521386-Screenshot_20260113_225858.jpg",
+      "status": "pending"
+    },
+    {
+      "id": 1768358525132,
+      "teamName": "MSG",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹20",
+      "screenshot": "1768358525121-Screenshot_20260113_225858.jpg",
+      "status": "Rejected"
+    },
+    {
+      "id": 1768360214481,
+      "teamName": "MSG",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹20",
+      "screenshot": "1768360214410-Screenshot_20260114_082840.jpg",
+      "status": "pending"
+    },
+    {
+      "id": 1768364396511,
+      "teamName": "MSG",
+      "whatsapp": "9981977828",
+      "time": "12:00 PM",
+      "fee": "₹25",
+      "screenshot": "1768364396480-Screenshot_20260114_081454.jpg",
+      "status": "pending"
+    }
+  ]
+}
