@@ -7,7 +7,9 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/* MIDDLEWARE */
+/* ===============================
+   MIDDLEWARE
+================================ */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,10 +22,13 @@ app.get("/", (req, res) => {
   res.send("Scrim Backend Running");
 });
 
-/* MULTER CONFIG */
+/* ===============================
+   MULTER CONFIG
+================================ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + "-" + file.originalname)
 });
 
 const upload = multer({
@@ -37,7 +42,9 @@ const upload = multer({
   }
 });
 
-/* FORM SUBMISSION */
+/* ===============================
+   FORM SUBMISSION
+================================ */
 app.post("/submit", upload.single("paymentSS"), (req, res) => {
   try {
     const { teamName, whatsapp, time, fee } = req.body;
@@ -47,7 +54,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
        STEP 3.1 – STRONG VALIDATIONS
        =============================== */
 
-    // 1️⃣ Required fields check
+    // Required fields
     if (!teamName || !whatsapp || !time || !fee) {
       return res.status(400).json({
         success: false,
@@ -62,7 +69,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
       });
     }
 
-    // 2️⃣ WhatsApp number validation (10 digit only)
+    // WhatsApp validation
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(whatsapp)) {
       return res.status(400).json({
@@ -71,7 +78,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
       });
     }
 
-    // 3️⃣ Team name cleaning & length check
+    // Team name clean
     const cleanTeamName = teamName.trim();
     if (cleanTeamName.length < 3) {
       return res.status(400).json({
@@ -80,7 +87,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
       });
     }
 
-    // 4️⃣ Time & Fee allow-list (anti-tampering)
+    // Allowed values
     const allowedTimes = ["12:00 PM", "3:00 PM", "9:00 PM"];
     const allowedFees = ["₹20", "₹25", "₹30"];
 
@@ -92,9 +99,8 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     }
 
     /* ===============================
-       DATA STORAGE (NO LIMIT, NO DUPLICATE CHECK YET)
+       LOAD DATABASE
        =============================== */
-
     const dbPath = path.join(__dirname, "db.json");
     let db = { submissions: [] };
 
@@ -105,7 +111,30 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
       db = { submissions: [] };
     }
 
-    // Save submission
+    /* ===============================
+       STEP 3.2 – DUPLICATE CHECK
+       Rule:
+       ❌ Same team name + same time
+       ✅ Same team + different time allowed
+       ✅ Same WhatsApp allowed
+       =============================== */
+    const duplicate = db.submissions.find(
+      r =>
+        r.time === time &&
+        r.teamName.toLowerCase() === cleanTeamName.toLowerCase()
+    );
+
+    if (duplicate) {
+      return res.status(409).json({
+        success: false,
+        message:
+          "This team is already registered for the selected time slot"
+      });
+    }
+
+    /* ===============================
+       SAVE SUBMISSION
+       =============================== */
     db.submissions.push({
       id: Date.now(),
       teamName: cleanTeamName,
@@ -133,19 +162,25 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
   }
 });
 
-/* CHECK SLOTS */
+/* ===============================
+   CHECK SLOTS (COUNT ONLY)
+================================ */
 app.get("/checkSlots", (req, res) => {
   const dbPath = path.join(__dirname, "db.json");
   let db = { submissions: [] };
   try { db = JSON.parse(fs.readFileSync(dbPath)); } catch {}
+
   const slots = {};
   ["12:00 PM", "3:00 PM", "9:00 PM"].forEach(
     s => slots[s] = db.submissions.filter(r => r.time === s).length
   );
+
   res.json(slots);
 });
 
-/* ADMIN */
+/* ===============================
+   ADMIN REGISTRATIONS
+================================ */
 app.get("/adminRegs", (req, res) => {
   const dbPath = path.join(__dirname, "db.json");
   let db = { submissions: [] };
@@ -153,7 +188,9 @@ app.get("/adminRegs", (req, res) => {
   res.json(db.submissions);
 });
 
-/* 🔥 ONLY ONE LISTEN */
+/* ===============================
+   SERVER START
+================================ */
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
