@@ -41,41 +41,95 @@ const upload = multer({
 app.post("/submit", upload.single("paymentSS"), (req, res) => {
   try {
     const { teamName, whatsapp, time, fee } = req.body;
+    const paymentSS = req.file;
 
-    if (!teamName || !whatsapp || !time || !fee || !req.file) {
-      return res.status(400).json({ message: "Missing data" });
+    /* ===============================
+       STEP 3.1 – STRONG VALIDATIONS
+       =============================== */
+
+    // 1️⃣ Required fields check
+    if (!teamName || !whatsapp || !time || !fee) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
     }
+
+    if (!paymentSS) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment screenshot is required"
+      });
+    }
+
+    // 2️⃣ WhatsApp number validation (10 digit only)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(whatsapp)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid WhatsApp number"
+      });
+    }
+
+    // 3️⃣ Team name cleaning & length check
+    const cleanTeamName = teamName.trim();
+    if (cleanTeamName.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: "Team name must be at least 3 characters"
+      });
+    }
+
+    // 4️⃣ Time & Fee allow-list (anti-tampering)
+    const allowedTimes = ["12 PM", "3 PM", "6 PM", "9 PM"];
+    const allowedFees = ["₹20", "₹25", "₹30"];
+
+    if (!allowedTimes.includes(time) || !allowedFees.includes(fee)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid slot or fee selected"
+      });
+    }
+
+    /* ===============================
+       DATA STORAGE (NO LIMIT, NO DUPLICATE CHECK YET)
+       =============================== */
 
     const dbPath = path.join(__dirname, "db.json");
     let db = { submissions: [] };
 
     try {
-      db = JSON.parse(fs.readFileSync(dbPath));
+      db = JSON.parse(fs.readFileSync(dbPath, "utf-8"));
       if (!db.submissions) db.submissions = [];
     } catch {
       db = { submissions: [] };
     }
 
-    if (db.submissions.filter(r => r.time === time).length >= 36) {
-      return res.status(400).json({ message: "Slot full" });
-    }
-
+    // Save submission
     db.submissions.push({
       id: Date.now(),
-      teamName,
+      teamName: cleanTeamName,
       whatsapp,
       time,
       fee,
-      screenshot: req.file.filename,
-      status: "pending"
+      screenshot: paymentSS.filename,
+      status: "pending",
+      createdAt: new Date().toISOString()
     });
 
     fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    res.json({ message: "Submitted successfully" });
+
+    return res.json({
+      success: true,
+      message: "Submitted successfully"
+    });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("SUBMIT ERROR:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 });
 
