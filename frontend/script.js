@@ -86,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
   submitBtn.disabled = true;
-  const originalText = submitBtn.innerText;
   submitBtn.innerText = "Submitting...";
 
   const res = await fetch("/submit", {
@@ -116,8 +115,8 @@ document.addEventListener("DOMContentLoaded", () => {
 } catch (err) {
   showToast("Server error", true);
 } finally {
-  submitBtn.disabled = true;   // keep disabled until new selection
   submitBtn.innerText = "Submit";
+  submitBtn.disabled = true; // stays disabled until user selects again
 }
   });
 
