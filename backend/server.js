@@ -58,6 +58,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (!teamName || !whatsapp || !time || !fee) {
       return res.status(400).json({
         success: false,
+        errorCode: "VALIDATION_ERROR",
         message: "All fields are required"
       });
     }
@@ -65,6 +66,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (!paymentSS) {
       return res.status(400).json({
         success: false,
+        errorCode: "MISSING_FILE",
         message: "Payment screenshot is required"
       });
     }
@@ -74,6 +76,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (!phoneRegex.test(whatsapp)) {
       return res.status(400).json({
         success: false,
+        errorCode: "INVALID_WHATSAPP",
         message: "Invalid WhatsApp number"
       });
     }
@@ -83,6 +86,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (cleanTeamName.length < 3) {
       return res.status(400).json({
         success: false,
+        errorCode: "INVALID_TEAM_NAME",
         message: "Team name must be at least 3 characters"
       });
     }
@@ -94,6 +98,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (!allowedTimes.includes(time) || !allowedFees.includes(fee)) {
       return res.status(400).json({
         success: false,
+        errorCode: "INVALID_SLOT_FEE",
         message: "Invalid slot or fee selected"
       });
     }
@@ -127,6 +132,7 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     if (duplicate) {
       return res.status(409).json({
         success: false,
+        errorCode: "DUPLICATE_TEAM_SLOT",
         message:
           "This team is already registered for the selected time slot"
       });
@@ -157,7 +163,8 @@ app.post("/submit", upload.single("paymentSS"), (req, res) => {
     console.error("SUBMIT ERROR:", err);
     return res.status(500).json({
       success: false,
-      message: "Server error"
+      errorCode: "SERVER_ERROR",
+      message: "Something went wrong. Try again later."
     });
   }
 });
