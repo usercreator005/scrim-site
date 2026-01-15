@@ -27,4 +27,9 @@ const token = jwt.sign(
   SECRET,
   { expiresIn: "2h" }   // Token valid for 2 hours
 );
+res.json({
+    success: true,
+    token,
+    message: "Login successful"
+  });
 };
