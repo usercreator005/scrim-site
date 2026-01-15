@@ -7,7 +7,7 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    data.forEach((reg,i)=>{
+    data.forEach((reg)=>{
       const tr=document.createElement("tr");
       tr.innerHTML=`
         <td>${reg.teamName}</td>
@@ -17,9 +17,14 @@ async function loadRegistrations() {
         <td><a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">View</a></td>
         <td class="status-${reg.status.toLowerCase()}">${reg.status}</td>
         <td>
-          <button class="accept" onclick="adminAction(${i}, 'Accepted', '${reg.whatsapp}')">Accept</button>
-          <button class="reject" onclick="adminAction(${i}, 'Rejected', '${reg.whatsapp}')">Reject</button>
-        </td>
+          <button class="accept"
+ onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">
+Accept</button>
+
+<button class="reject"
+ onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">
+Reject</button>
+           </td>
       `;
       tbody.appendChild(tr);
     });
