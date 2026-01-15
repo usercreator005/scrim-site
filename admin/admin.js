@@ -8,6 +8,30 @@ if (!ADMIN_TOKEN) {
   window.location.href = "login.html";
 }
 
+async function loadLastReset() {
+  const token = localStorage.getItem("adminToken");
+  const res = await fetch(`${BACKEND_URL}/admin/lastReset`, {
+    headers: { "x-admin-token": token }
+  });
+  const data = await res.json();
+  document.getElementById("lastReset").innerText = data.lastReset || "Never";
+}
+
+// Manual reset button
+async function manualReset() {
+  const token = localStorage.getItem("adminToken");
+  const res = await fetch(`${BACKEND_URL}/admin/manualReset`, {
+    method: "POST",
+    headers: { "x-admin-token": token }
+  });
+  const data = await res.json();
+  alert(data.message);
+  loadLastReset();
+}
+
+// Load last reset on page load
+loadLastReset();
+
 /* ===============================
    LOAD REGISTRATIONS
 ================================ */
