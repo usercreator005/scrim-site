@@ -1,4 +1,4 @@
-<script>
+
 const BACKEND_URL = "https://scrim-backend.onrender.com";
 
 async function adminLogin() {
@@ -36,4 +36,4 @@ async function adminLogin() {
     console.error(err);
   }
 }
-</script>
+
