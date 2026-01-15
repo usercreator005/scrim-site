@@ -6,7 +6,7 @@ const {
   validateWhatsapp,
   validateSlotFee,
   validatePaymentFile
-} = require("../utils/validators");
+} = require("../utils/utils/validators");
 
 /* ===============================
    SUBMIT CONTROLLER
