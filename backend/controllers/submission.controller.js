@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
+const { checkAndResetIfNeeded } = require("../services/reset.service");
 const {
   validateTeamName,
   validateWhatsapp,
@@ -13,6 +13,8 @@ const {
 ================================ */
 exports.submitRegistration = (req, res) => {
   try {
+ // 🔁 DAILY RESET CHECK (STEP 3)
+    checkAndResetIfNeeded();
     const { teamName, whatsapp, time, fee } = req.body;
     const paymentSS = req.file;
 
