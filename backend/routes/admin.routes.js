@@ -18,14 +18,27 @@ router.post("/adminAction/:id", adminAuth, adminAction);
 /* ===============================
    MANUAL RESET ROUTES
 ================================ */
+
+// Trigger manual reset
 router.post("/admin/manualReset", adminAuth, (req, res) => {
-  manualReset();
-  res.json({ success: true, message: "Manual reset done" });
+  try {
+    manualReset();
+    res.json({ success: true, message: "Manual reset done successfully" });
+  } catch (err) {
+    console.error("[RESET ERROR]", err);
+    res.status(500).json({ success: false, message: "Manual reset failed" });
+  }
 });
 
+// Get last reset date
 router.get("/admin/lastReset", adminAuth, (req, res) => {
-  const lastReset = getLastResetDate();
-  res.json({ lastReset });
+  try {
+    const lastReset = getLastResetDate();
+    res.json({ success: true, lastReset });
+  } catch (err) {
+    console.error("[LAST RESET ERROR]", err);
+    res.status(500).json({ success: false, message: "Could not fetch last reset" });
+  }
 });
 
 module.exports = router;
