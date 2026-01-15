@@ -6,7 +6,7 @@ const path = require("path");
    ROUTES IMPORT
 ================================ */
 const submissionRoutes = require("./routes/submission.routes");
-const adminRoutes = require("./routes/admin.routes");
+//const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +29,7 @@ app.use("/admin", express.static(path.join(__dirname, "../admin")));
    ROUTES USE
 ================================ */
 app.use("/", submissionRoutes);
-app.use("/", adminRoutes);
+//app.use("/", adminRoutes);
 
 /* ===============================
    ROOT TEST
