@@ -40,6 +40,19 @@ app.get("/", (req, res) => {
 });
 
 /* ===============================
+   DAILY RESET SCHEDULER
+   🔹 Free + mobile friendly
+   🔹 Runs every minute, resets at 10 PM
+================================ */
+setInterval(() => {
+  const now = new Date();
+  if (now.getHours() === 22 && now.getMinutes() === 0) {
+    resetDailyRegistrations();
+  }
+}, 60 * 1000);
+
+
+/* ===============================
    SERVER START
 ================================ */
 app.listen(PORT, () => {
