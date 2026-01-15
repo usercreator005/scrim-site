@@ -1,9 +1,6 @@
-// Simple in-memory token store
-const validTokens = new Set();
+const jwt = require("jsonwebtoken");
 
-function addToken(token) {
-  validTokens.add(token);
-}
+const SECRET = process.env.ADMIN_SECRET || "scrim-secret";
 
 function adminAuth(req, res, next) {
   const token = req.headers["x-admin-token"];
@@ -15,17 +12,19 @@ function adminAuth(req, res, next) {
     });
   }
 
-  if (!validTokens.has(token)) {
+  try {
+    const decoded = jwt.verify(token, SECRET);
+
+    // 🕒 Expiry auto check hoti hai yaha
+    req.admin = decoded;
+    next();
+
+  } catch (err) {
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token"
+      message: "Token expired or invalid"
     });
   }
-
-  next();
 }
 
-module.exports = {
-  adminAuth,
-  addToken
-};
+module.exports = adminAuth;
