@@ -5,7 +5,7 @@ const path = require("path");
 
 const {
   submitRegistration
-} = require("../controllers/submission.controller");
+} = require("../controllers/controllers/submission.controller");
 
 /* ===============================
    MULTER CONFIG (ROUTE LEVEL)
