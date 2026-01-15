@@ -1,8 +1,7 @@
-
 const BACKEND_URL = "https://scrim-backend.onrender.com";
 
 async function adminLogin() {
-  const password = document.getElementById("password").value;
+  const password = document.getElementById("password").value.trim();
 
   if (!password) {
     alert("Password required");
@@ -12,9 +11,7 @@ async function adminLogin() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password })
     });
 
@@ -32,8 +29,7 @@ async function adminLogin() {
     window.location.href = "dashboard.html";
 
   } catch (err) {
-    alert("Server error");
+    alert("Server error. Check console.");
     console.error(err);
   }
 }
-
