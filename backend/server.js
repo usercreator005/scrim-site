@@ -5,8 +5,8 @@ const path = require("path");
 /* ===============================
    ROUTES IMPORT
 ================================ */
-const submissionRoutes = require("./routes/routes/submission.routes");
-const adminRoutes = require("./routes/routes/admin.routes");
+const submissionRoutes = require("./routes/submission.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
