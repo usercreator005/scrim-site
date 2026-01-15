@@ -5,87 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-  }
-
-  h1 {
-    text-align: center;
-    color: #ffcc00;
-    padding: 10px;
-  }
-
-  button {
-    padding: 6px 12px;
-    margin: 3px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-  button:hover { transform: scale(1.05); opacity: 0.9; }
-  button:active { transform: scale(0.95); }
-  button.accept { background-color: #4CAF50; color: #fff; }
-  button.reject { background-color: #f44336; color: #fff; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  th, td {
-    padding: 10px;
-    text-align: center;
-  }
-
-  th {
-    background-color: #222;
-    color: #ffcc00;
-  }
-
-  td {
-    border-bottom: 1px solid #333;
-  }
-
-  tr:nth-child(even) { background-color: #161616; }
-  tr:hover { background-color: #1f1f1f; }
-
-  a { color: #ffcc00; text-decoration: none; }
-
-  .status-pending { color: #ffcc00; font-weight: bold; }
-  .status-accepted { color: #4CAF50; font-weight: bold; }
-  .status-rejected { color: #f44336; font-weight: bold; }
-
-  @media(max-width:480px){
-    table { font-size: 12px; }
-    th, td { padding: 6px; }
-    button { width: 100%; margin-bottom: 4px; }
-  }
+  body { font-family: Arial, sans-serif; background: #111; color: #fff; margin:0; padding:0; }
+  h1 { text-align:center; color:#ffcc00; padding:10px; }
+  button { padding:6px 12px; margin:3px; border-radius:8px; border:none; cursor:pointer; transition:0.2s ease; }
+  button:hover{ transform:scale(1.05); opacity:0.9; } button:active{ transform:scale(0.95);}
+  button.accept{background-color:#4CAF50;color:#fff;} button.reject{background-color:#f44336;color:#fff;}
+  table{width:100%; border-collapse:collapse; font-size:14px;} th, td{padding:10px;text-align:center;}
+  th{background-color:#222;color:#ffcc00;} td{border-bottom:1px solid #333;}
+  tr:nth-child(even){background-color:#161616;} tr:hover{background-color:#1f1f1f;}
+  a{color:#ffcc00;text-decoration:none;}
+  .status-pending{color:#ffcc00;font-weight:bold;}
+  .status-accepted{color:#4CAF50;font-weight:bold;}
+  .status-rejected{color:#f44336;font-weight:bold;}
+  @media(max-width:480px){table{font-size:12px;} th,td{padding:6px;} button{width:100%; margin-bottom:4px;}}
 </style>
 </head>
 <body>
 
-<script>
-  // Simple localStorage-based "auth" check
-  if(!localStorage.getItem("adminToken")){
-  window.location.href = "login.html";
-}
-</script>
-
 <h1>Admin Dashboard</h1>
 <button onclick="logout()">Logout</button>
-
-<script>
-  function logout(){
-    localStorage.removeItem("adminLogged");
-    window.location.href = "login.html";
-  }
-</script>
 
 <table border="2">
   <thead>
@@ -101,6 +39,7 @@
   </thead>
   <tbody id="adminTable"></tbody>
 </table>
+
 <h2>Daily Reset</h2>
 <p>Last reset: <span id="lastReset">Loading...</span></p>
 <button onclick="manualReset()">Manual Reset Now</button>
