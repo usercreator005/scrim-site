@@ -1,6 +1,7 @@
 const { addToken } = require("../middlewares/adminAuth.middleware");
+const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-
+const SECRET = process.env.ADMIN_SECRET || "scrim-secret";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
 exports.adminLogin = (req, res) => {
@@ -21,12 +22,9 @@ exports.adminLogin = (req, res) => {
   }
 
   // Simple token
-  const token = crypto.randomBytes(24).toString("hex");
-addToken(token);
-
-res.json({
-  success: true,
-  token,
-  message: "Login successful"
-});
+const token = jwt.sign(
+  { role: "admin" },
+  SECRET,
+  { expiresIn: "2h" }   // Token valid for 2 hours
+);
 };
