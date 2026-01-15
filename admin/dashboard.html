@@ -72,9 +72,9 @@
 
 <script>
   // Simple localStorage-based "auth" check
-  if(localStorage.getItem("adminLogged") !== "yes"){
-    window.location.href = "login.html";
-  }
+  if(!localStorage.getItem("adminToken")){
+  window.location.href = "login.html";
+}
 </script>
 
 <h1>Admin Dashboard</h1>
