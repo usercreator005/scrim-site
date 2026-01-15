@@ -23,11 +23,27 @@ function readDB() {
 function writeDB(data) {
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 }
+/* ===============================
+   UPDATE STATUS BY ID
+================================ */
+function updateStatusById(id, status) {
+  const db = readDB();
 
+  const index = db.submissions.findIndex(
+    item => item.id === id
+  );
+
+  if (index === -1) return false;
+
+  db.submissions[index].status = status;
+  writeDB(db);
+  return true;
+}
 /* ===============================
    EXPORT METHODS
 ================================ */
 module.exports = {
   readDB,
-  writeDB
+  writeDB,
+   updateStatusById
 };
