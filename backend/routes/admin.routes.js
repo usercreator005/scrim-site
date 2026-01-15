@@ -1,3 +1,4 @@
+const { adminAuth } = require("../middlewares/adminAuth.middleware");
 const express = require("express");
 const router = express.Router();
 
@@ -6,9 +7,6 @@ const {
   adminAction
 } = require("../controllers/admin.controller");
 
-router.get("/adminRegs", getAllRegistrations);
-
-// 🔥 ID based (SAFE)
-router.post("/adminAction/:id", adminAction);
-
+router.get("/adminRegs", adminAuth, getAllRegistrations);
+router.post("/adminAction/:id", adminAuth, adminAction);
 module.exports = router;
