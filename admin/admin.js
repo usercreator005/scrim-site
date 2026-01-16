@@ -11,7 +11,9 @@ function logout() {
   window.location.href = "login.html";
 }
 
-// Load last reset date
+/* ===============================
+   LOAD LAST RESET
+================================ */
 async function loadLastReset() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/lastReset`, {
@@ -19,10 +21,12 @@ async function loadLastReset() {
     });
     const data = await res.json();
     document.getElementById("lastReset").innerText = data.lastReset || "Never";
-  } catch(err) { console.error(err); document.getElementById("lastReset").innerText = "Error"; }
+  } catch (err) {
+    console.error(err);
+    document.getElementById("lastReset").innerText = "Error";
+  }
 }
 
-// Manual reset
 async function manualReset() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/manualReset`, {
@@ -32,18 +36,22 @@ async function manualReset() {
     const data = await res.json();
     alert(data.message);
     loadLastReset();
-    loadRegistrations(); // refresh table after reset
-  } catch(err) { console.error(err); alert("Reset failed"); }
+    loadRegistrations();
+  } catch (err) {
+    console.error(err);
+    alert("Reset failed");
+  }
 }
 
 /* ===============================
-   LOAD REGISTRATIONS
+   LOAD REGISTRATIONS + LOBBY LOGIC
 ================================ */
 async function loadRegistrations() {
   try {
     const res = await fetch(`${BACKEND_URL}/adminRegs`, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
+
     if (res.status === 401) {
       alert("Unauthorized. Login again.");
       logout();
@@ -54,46 +62,95 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    data.forEach(reg => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${reg.teamName}</td>
-        <td>${reg.whatsapp}</td>
-        <td>${reg.time}</td>
-        <td>${reg.fee}</td>
-        <td><a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">View</a></td>
-        <td class="status-${reg.status.toLowerCase()}">${reg.status}</td>
-        <td>
-          <button class="accept" onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">Accept</button>
-          <button class="reject" onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">Reject</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    /* 🔹 STEP 1: Only Accepted Teams */
+    const accepted = data.filter(r => r.status === "Accepted");
+
+    /* 🔹 STEP 2: Group by Time + Fee */
+    const groups = {};
+    accepted.forEach(r => {
+      const key = `${r.time}_${r.fee}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(r);
     });
-  } catch(err) { console.error("Error loading registrations:", err); }
+
+    /* 🔹 STEP 3: Render Lobby Wise */
+    Object.keys(groups).forEach(key => {
+      const teams = groups[key];
+      const [time, fee] = key.split("_");
+
+      teams.forEach((team, index) => {
+        // 🟡 Every 12 teams = new lobby
+        if (index % 12 === 0) {
+          const lobbyNo = Math.floor(index / 12) + 1;
+
+          const lobbyRow = document.createElement("tr");
+          lobbyRow.innerHTML = `
+            <td colspan="7" style="
+              background:#222;
+              color:#ffcc00;
+              font-weight:bold;
+              text-align:center;
+            ">
+              Lobby No: ${lobbyNo} | Time: ${time} | Fee: ₹${fee}
+            </td>
+          `;
+          tbody.appendChild(lobbyRow);
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${team.teamName}</td>
+          <td>${team.whatsapp}</td>
+          <td>${team.time}</td>
+          <td>${team.fee}</td>
+          <td>
+            <a href="${BACKEND_URL}/uploads/${team.screenshot}" target="_blank">
+              View
+            </a>
+          </td>
+          <td class="status-accepted">Accepted</td>
+          <td>—</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+
+  } catch (err) {
+    console.error("Error loading registrations:", err);
+  }
 }
 
-// Admin action
+/* ===============================
+   ADMIN ACTION (Accept / Reject)
+================================ */
 async function adminAction(id, status, whatsappNumber) {
   try {
     const res = await fetch(`${BACKEND_URL}/adminAction/${id}`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "x-admin-token": ADMIN_TOKEN
       },
       body: JSON.stringify({ status })
     });
-    if (res.status === 401) { alert("Unauthorized. Login again."); logout(); return; }
 
+    if (res.status === 401) {
+      alert("Unauthorized. Login again.");
+      logout();
+      return;
+    }
+
+    // 📲 WhatsApp message
     if (whatsappNumber) {
       const message = `Hello! Your Free Fire Scrim registration has been ${status}.`;
       const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
 
-    loadRegistrations(); // refresh table
-  } catch(err) { console.error("Admin action failed:", err); }
+    loadRegistrations();
+  } catch (err) {
+    console.error("Admin action failed:", err);
+  }
 }
 
 /* ===============================
