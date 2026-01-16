@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const authRoutes = require("./routes/auth.routes");
+const connectDB = require("./config/db");
 /* ===============================
    ROUTES IMPORT
 ================================ */
@@ -10,6 +11,7 @@ const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+connectDB();
 
 /* ===============================
    MIDDLEWARE
