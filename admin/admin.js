@@ -63,7 +63,7 @@ async function loadRegistrations() {
     tbody.innerHTML = "";
 
     /* ===============================
-       1️⃣ PENDING REGISTRATIONS
+       1️⃣ PENDING REGISTRATIONS (FULL)
     =============================== */
     const pending = data.filter(r => r.status === "pending");
 
@@ -95,10 +95,11 @@ async function loadRegistrations() {
     });
 
     /* ===============================
-       2️⃣ ACCEPTED → LOBBY SYSTEM
+       2️⃣ ACCEPTED → SIMPLE LOBBY VIEW
     =============================== */
     const accepted = data.filter(r => r.status === "Accepted");
 
+    // Group by time + fee
     const groups = {};
     accepted.forEach(r => {
       const key = `${r.time}_${r.fee}`;
@@ -111,6 +112,8 @@ async function loadRegistrations() {
       const [time, fee] = key.split("_");
 
       teams.forEach((team, index) => {
+
+        // Every 12 teams = new lobby heading
         if (index % 12 === 0) {
           const lobbyNo = Math.floor(index / 12) + 1;
 
@@ -128,19 +131,11 @@ async function loadRegistrations() {
           tbody.appendChild(lobbyRow);
         }
 
+        // Team row (ONLY Sr.No + Team Name)
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${team.teamName}</td>
-          <td>${team.whatsapp}</td>
-          <td>${team.time}</td>
-          <td>${team.fee}</td>
-          <td>
-            <a href="${BACKEND_URL}/uploads/${team.screenshot}" target="_blank">
-              View
-            </a>
-          </td>
-          <td class="status-accepted">Accepted</td>
-          <td>—</td>
+          <td colspan="2">${(index % 12) + 1}</td>
+          <td colspan="5">${team.teamName}</td>
         `;
         tbody.appendChild(tr);
       });
