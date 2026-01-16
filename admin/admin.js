@@ -62,11 +62,8 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    /* ===============================
-       1️⃣ PENDING REGISTRATIONS (FULL)
-    =============================== */
+    // 1️⃣ PENDING REGISTRATIONS
     const pending = data.filter(r => r.status === "pending");
-
     pending.forEach(reg => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -74,32 +71,18 @@ async function loadRegistrations() {
         <td>${reg.whatsapp}</td>
         <td>${reg.time}</td>
         <td>${reg.fee}</td>
-        <td>
-          <a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">
-            View
-          </a>
-        </td>
+        <td><a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">View</a></td>
         <td class="status-pending">Pending</td>
         <td>
-          <button class="accept"
-            onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">
-            Accept
-          </button>
-          <button class="reject"
-            onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">
-            Reject
-          </button>
+          <button class="accept" onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">Accept</button>
+          <button class="reject" onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">Reject</button>
         </td>
       `;
       tbody.appendChild(tr);
     });
 
-    /* ===============================
-       2️⃣ ACCEPTED → SIMPLE LOBBY VIEW
-    =============================== */
+    // 2️⃣ ACCEPTED → SIMPLE LOBBY VIEW (12 per lobby)
     const accepted = data.filter(r => r.status === "Accepted");
-
-    // Group by time + fee
     const groups = {};
     accepted.forEach(r => {
       const key = `${r.time}_${r.fee}`;
@@ -112,30 +95,23 @@ async function loadRegistrations() {
       const [time, fee] = key.split("_");
 
       teams.forEach((team, index) => {
-
-        // Every 12 teams = new lobby heading
         if (index % 12 === 0) {
           const lobbyNo = Math.floor(index / 12) + 1;
-
           const lobbyRow = document.createElement("tr");
           lobbyRow.innerHTML = `
-            <td colspan="7" style="
-              background:#222;
-              color:#ffcc00;
-              font-weight:bold;
-              text-align:center;
-            ">
+            <td colspan="7" style="background:#222;color:#ffcc00;font-weight:bold;text-align:center;">
               Lobby No: ${lobbyNo} | Time: ${time} | Fee: ₹${fee}
             </td>
           `;
           tbody.appendChild(lobbyRow);
         }
 
-        // Team row (ONLY Sr.No + Team Name)
+        // Team row (Sr.No + Team Name + Screenshot)
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td colspan="2">${(index % 12) + 1}</td>
-          <td colspan="5">${team.teamName}</td>
+          <td colspan="1">${(index % 12) + 1}</td>
+          <td colspan="3">${team.teamName}</td>
+          <td colspan="3"><a href="${BACKEND_URL}/uploads/${team.screenshot}" target="_blank">View</a></td>
         `;
         tbody.appendChild(tr);
       });
@@ -147,26 +123,18 @@ async function loadRegistrations() {
 }
 
 /* ===============================
-   ADMIN ACTION (Accept / Reject)
+   ADMIN ACTION
 ================================ */
 async function adminAction(id, status, whatsappNumber) {
   try {
     const res = await fetch(`${BACKEND_URL}/adminAction/${id}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": ADMIN_TOKEN
-      },
+      headers: { "Content-Type": "application/json", "x-admin-token": ADMIN_TOKEN },
       body: JSON.stringify({ status })
     });
 
-    if (res.status === 401) {
-      alert("Unauthorized. Login again.");
-      logout();
-      return;
-    }
+    if (res.status === 401) { alert("Unauthorized. Login again."); logout(); return; }
 
-    // 📲 WhatsApp message
     if (whatsappNumber) {
       const message = `Hello! Your Free Fire Scrim registration has been ${status}.`;
       const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;

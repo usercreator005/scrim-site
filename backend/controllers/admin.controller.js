@@ -1,10 +1,16 @@
 const { readDB, updateStatusById } = require("../services/db.service");
 
+/* ===============================
+   GET ALL REGISTRATIONS
+================================ */
 exports.getAllRegistrations = (req, res) => {
   const db = readDB();
   res.json(db.submissions);
 };
 
+/* ===============================
+   ADMIN ACTION
+================================ */
 exports.adminAction = (req, res) => {
   const { id } = req.params;
   const { status } = req.body;

@@ -1,19 +1,17 @@
+const { validateTeamName, validateWhatsapp, validateSlotFee, validatePaymentFile } = require("../utils/validators");
+const { checkAndResetIfNeeded } = require("../services/reset.service");
 const fs = require("fs");
 const path = require("path");
-const { checkAndResetIfNeeded } = require("../services/reset.service");
-const {
-  validateTeamName,
-  validateWhatsapp,
-  validateSlotFee,
-  validatePaymentFile
-} = require("../utils/validators");
 
 /* ===============================
    SUBMIT CONTROLLER
+   - NO SLOT LIMIT
 ================================ */
 exports.submitRegistration = (req, res) => {
   try {
- 
+    // 🔁 DAILY RESET (optional, remove if using MongoDB later)
+    checkAndResetIfNeeded();
+
     const { teamName, whatsapp, time, fee } = req.body;
     const paymentSS = req.file;
 
@@ -63,8 +61,7 @@ exports.submitRegistration = (req, res) => {
       return res.status(409).json({
         success: false,
         errorCode: "DUPLICATE_TEAM_SLOT",
-        message:
-          "This team is already registered for the selected time slot"
+        message: "This team is already registered for the selected time slot"
       });
     }
 
