@@ -13,8 +13,7 @@ const {
 ================================ */
 exports.submitRegistration = (req, res) => {
   try {
- // 🔁 DAILY RESET CHECK (STEP 3)
-    checkAndResetIfNeeded();
+ 
     const { teamName, whatsapp, time, fee } = req.body;
     const paymentSS = req.file;
 
