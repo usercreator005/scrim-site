@@ -2,11 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminAuth = require("../middlewares/adminAuth.middleware");
 
-const {
-  getAllRegistrations,
-  adminAction
-} = require("../controllers/admin.controller");
-
+const { getAllRegistrations, adminAction } = require("../controllers/admin.controller");
 const { manualReset, getLastResetDate } = require("../services/reset.service");
 
 /* ===============================
@@ -18,8 +14,6 @@ router.post("/adminAction/:id", adminAuth, adminAction);
 /* ===============================
    MANUAL RESET ROUTES
 ================================ */
-
-// Trigger manual reset
 router.post("/admin/manualReset", adminAuth, (req, res) => {
   try {
     manualReset();
@@ -30,7 +24,6 @@ router.post("/admin/manualReset", adminAuth, (req, res) => {
   }
 });
 
-// Get last reset date
 router.get("/admin/lastReset", adminAuth, (req, res) => {
   try {
     const lastReset = getLastResetDate();
