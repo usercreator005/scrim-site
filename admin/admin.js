@@ -62,10 +62,43 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    /* 🔹 STEP 1: Only Accepted Teams */
+    /* ===============================
+       1️⃣ PENDING REGISTRATIONS
+    =============================== */
+    const pending = data.filter(r => r.status === "pending");
+
+    pending.forEach(reg => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${reg.teamName}</td>
+        <td>${reg.whatsapp}</td>
+        <td>${reg.time}</td>
+        <td>${reg.fee}</td>
+        <td>
+          <a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">
+            View
+          </a>
+        </td>
+        <td class="status-pending">Pending</td>
+        <td>
+          <button class="accept"
+            onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">
+            Accept
+          </button>
+          <button class="reject"
+            onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">
+            Reject
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    /* ===============================
+       2️⃣ ACCEPTED → LOBBY SYSTEM
+    =============================== */
     const accepted = data.filter(r => r.status === "Accepted");
 
-    /* 🔹 STEP 2: Group by Time + Fee */
     const groups = {};
     accepted.forEach(r => {
       const key = `${r.time}_${r.fee}`;
@@ -73,13 +106,11 @@ async function loadRegistrations() {
       groups[key].push(r);
     });
 
-    /* 🔹 STEP 3: Render Lobby Wise */
     Object.keys(groups).forEach(key => {
       const teams = groups[key];
       const [time, fee] = key.split("_");
 
       teams.forEach((team, index) => {
-        // 🟡 Every 12 teams = new lobby
         if (index % 12 === 0) {
           const lobbyNo = Math.floor(index / 12) + 1;
 
@@ -116,7 +147,7 @@ async function loadRegistrations() {
     });
 
   } catch (err) {
-    console.error("Error loading registrations:", err);
+    console.error("Admin load error:", err);
   }
 }
 
