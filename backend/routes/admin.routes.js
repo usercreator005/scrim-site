@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const adminAuth = require("../middlewares/adminAuth.middleware");
-
+const { createLobby } = require("../controllers/admin.controller");
 const {
   getAllRegistrations,
   adminAction
@@ -48,5 +48,7 @@ router.get("/admin/lastReset", adminAuth, (req, res) => {
     res.status(500).json({ success: false, message: "Could not fetch last reset" });
   }
 });
+router.post("/admin/createLobby", adminAuth, createLobby);
+
 
 module.exports = router;
