@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       feeButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      selectedFee = btn.innerText;
+      selectedFee = Number(btn.innerText.replace("₹", ""));
 
       teamName.disabled = false;
       whatsapp.disabled = false;
