@@ -233,6 +233,42 @@ All the best!`;
     console.error("Admin action failed:", err);
   }
 }
+async function loadLobbies() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+
+    const lobbies = await res.json();
+    const tbody = document.getElementById("lobbyTable");
+    tbody.innerHTML = "";
+
+    lobbies.forEach(lobby => {
+      const remaining = lobby.maxTeams - lobby.currentTeams;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${lobby.time}</td>
+        <td>₹${lobby.fee}</td>
+        <td>${lobby.lobbyNo}</td>
+        <td>${lobby.maxTeams}</td>
+        <td>${lobby.currentTeams}</td>
+        <td style="color:${remaining === 0 ? 'red' : 'lightgreen'}">
+          ${remaining}
+        </td>
+        <td>
+          <a href="${lobby.whatsappGroupLink}" target="_blank">
+            Open
+          </a>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error("Load lobbies failed", err);
+  }
+}
 
 async function createLobby() {
   const time = document.getElementById("lobbyTime").value;
