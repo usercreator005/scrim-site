@@ -278,6 +278,35 @@ All the best!`;
     console.error("Admin action failed:", err);
   }
 }
+async function saveLobbyLink() {
+  const select = document.getElementById("lobbyTimeFeeSelect");
+  const link = document.getElementById("lobbyLinkInput").value.trim();
+
+  if (!select.value || !link) {
+    alert("Select lobby and enter link");
+    return;
+  }
+
+  const [time, fee] = select.value.split("_");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbyLink`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ time, fee, link })
+    });
+    const data = await res.json();
+    document.getElementById("lobbyLinkStatus").innerText = data.message;
+    loadRegistrations(); // Refresh table
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save link");
+  }
+}
+
 async function loadLobbies() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
