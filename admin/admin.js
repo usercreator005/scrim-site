@@ -11,6 +11,12 @@ function logout() {
   window.location.href = "login.html";
 }
 
+const tr = document.createElement("tr");
+tr.innerHTML = `
+  <td>${(index % 12) + 1}</td>
+  <td>${team.lobbyNo}</td>
+  <td colspan="5">${team.teamName}</td>
+`;
 async function saveLobbyConfig() {
   const time = document.getElementById("lobbyTime").value;
   const fee = document.getElementById("lobbyFee").value;
