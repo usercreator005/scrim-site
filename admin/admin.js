@@ -234,6 +234,43 @@ All the best!`;
   }
 }
 
+async function createLobby() {
+  const time = document.getElementById("lobbyTime").value;
+  const fee = Number(document.getElementById("lobbyFee").value);
+  const lobbyNo = Number(document.getElementById("lobbyNo").value);
+  const maxTeams = Number(document.getElementById("maxTeams").value);
+  const whatsappGroupLink = document.getElementById("wpLink").value;
+
+  if (!time || !fee || !lobbyNo || !whatsappGroupLink) {
+    alert("All fields required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/createLobby`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({
+        time,
+        fee,
+        lobbyNo,
+        maxTeams,
+        whatsappGroupLink
+      })
+    });
+
+    const data = await res.json();
+    alert(data.message || "Lobby created");
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to create lobby");
+  }
+}
+
 /* ===============================
    INIT
 ================================ */
