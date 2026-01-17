@@ -9,13 +9,41 @@ exports.getAllRegistrations = async (req, res) => {
 
 exports.adminAction = async (req, res) => {
   const { id } = req.params;
-  const status = req.body.status?.toLowerCase();
+  const { status } = req.body;
 
-  if (!status) {
-    return res.status(400).json({
-      success: false,
-      message: "Status required"
-    });
+  const reg = await Registration.findById(id);
+  if (!reg) return res.status(404).json({ success:false });
+
+  if (status === "accepted") {
+
+    const lobby = await Lobby.findOne({
+      time: reg.time,
+      fee: reg.fee,
+      currentTeams: { $lt: "$maxTeams" }
+    }).sort({ lobbyNo: 1 });
+
+    if (!lobby) {
+      return res.status(400).json({
+        success:false,
+        message:"No lobby available"
+      });
+    }
+
+    reg.status = "accepted";
+    reg.lobbyNo = lobby.lobbyNo;
+    reg.lobbyId = lobby._id;
+
+    lobby.currentTeams += 1;
+
+    await lobby.save();
+    await reg.save();
+  } else {
+    reg.status = status;
+    await reg.save();
+  }
+
+  res.json({ success:true });
+};
   }
 
   const updated = await Registration.findByIdAndUpdate(
