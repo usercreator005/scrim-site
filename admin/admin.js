@@ -82,11 +82,11 @@ async function loadRegistrations() {
         <td class="status-pending">Pending</td>
         <td>
           <button class="accept"
-            onclick="adminAction(${reg.id}, 'Accepted', '${reg.whatsapp}')">
+            onclick="adminAction(${reg._id}, 'Accepted', '${reg.whatsapp}')">
             Accept
           </button>
           <button class="reject"
-            onclick="adminAction(${reg.id}, 'Rejected', '${reg.whatsapp}')">
+            onclick="adminAction(${reg._id}, 'Rejected', '${reg.whatsapp}')">
             Reject
           </button>
         </td>
