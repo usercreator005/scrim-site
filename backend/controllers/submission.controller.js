@@ -14,7 +14,8 @@ exports.submitRegistration = async (req, res) => {
 console.log("FILE:", req.file);
 console.log("BODY:", req.body);
 
-    const { teamName, whatsapp, time, fee } = req.body;
+    const { teamName, whatsapp, time } = req.body;
+const fee = Number(req.body.fee);
     const paymentSS = req.file;
 
     /* VALIDATION */
