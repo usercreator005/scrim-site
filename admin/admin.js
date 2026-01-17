@@ -380,7 +380,20 @@ async function createLobby() {
     alert("Failed to create lobby");
   }
 }
+if (status === "accepted" && whatsappNumber) {
+  let message = `Hello! Your Free Fire Scrim registration has been ACCEPTED ✅
+🕒 Time: ${time}
+💰 Fee: ₹${fee}`;
 
+  // Get lobby link for this team
+  const team = data.find(r => r._id === id);
+  if (team && team.lobbyLink) {
+    message += `\nJoin Lobby: ${team.lobbyLink}`;
+  }
+
+  const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
 /* ===============================
    INIT
 ================================ */
