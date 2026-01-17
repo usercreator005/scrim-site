@@ -51,6 +51,13 @@ router.get("/admin/lastReset", adminAuth, (req, res) => {
 });
 router.post("/admin/createLobby", adminAuth, createLobby);
 router.get("/admin/lobbies", adminAuth, getAllLobbies);
+const { getLobbyLimits, setLobbyLimit } = require("../controllers/admin.controller");
+
+// Get all lobby limits
+router.get("/admin/lobbyLimits", adminAuth, getLobbyLimits);
+
+// Set / update lobby limit
+router.post("/admin/lobbyLimits", adminAuth, setLobbyLimit);
 
 
 module.exports = router;
