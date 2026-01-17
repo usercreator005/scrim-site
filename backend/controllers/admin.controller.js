@@ -7,7 +7,7 @@ exports.getAllRegistrations = async (req, res) => {
 
 exports.adminAction = async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const status = req.body.status?.toLowerCase();
 
   if (!status) {
     return res.status(400).json({
