@@ -1,22 +1,26 @@
-const { readDB, updateStatusById } = require("../services/db.service");
+const Registration = require("../models/Registration");
 
-exports.getAllRegistrations = (req, res) => {
-  const db = readDB();
-  res.json(db.submissions);
+exports.getAllRegistrations = async (req, res) => {
+  const data = await Registration.find().sort({ createdAt: -1 });
+  res.json(data);
 };
 
-exports.adminAction = (req, res) => {
+exports.adminAction = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  if (!id || !status) {
+  if (!status) {
     return res.status(400).json({
       success: false,
-      message: "ID and status required"
+      message: "Status required"
     });
   }
 
-  const updated = updateStatusById(Number(id), status);
+  const updated = await Registration.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  );
 
   if (!updated) {
     return res.status(404).json({
