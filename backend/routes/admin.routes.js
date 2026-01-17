@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminAuth = require("../middlewares/adminAuth.middleware");
 const { createLobby } = require("../controllers/admin.controller");
+const { getAllLobbies } = require("../controllers/lobby.controller");
 const {
   getAllRegistrations,
   adminAction
@@ -49,6 +50,7 @@ router.get("/admin/lastReset", adminAuth, (req, res) => {
   }
 });
 router.post("/admin/createLobby", adminAuth, createLobby);
+router.get("/admin/lobbies", adminAuth, getAllLobbies);
 
 
 module.exports = router;
