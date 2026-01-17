@@ -126,6 +126,14 @@
 </div>
 
 <h2>Daily Reset</h2>
+<h2>Set Lobby WhatsApp Link</h2>
+<select id="lobbyTimeFeeSelect">
+  <option value="">Select Lobby (Time & Fee)</option>
+  <!-- Options will be dynamically loaded -->
+</select>
+<input type="text" id="lobbyLinkInput" placeholder="Paste WhatsApp group link here">
+<button onclick="saveLobbyLink()">Save Link</button>
+<p id="lobbyLinkStatus"></p>
 <h2>Lobby Limits</h2>
 <div id="lobbyLimitsContainer">
   <!-- Limits will load here -->
