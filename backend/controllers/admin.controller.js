@@ -86,3 +86,12 @@ exports.createOrUpdateLobbyConfig = async (req, res) => {
     });
   }
 };
+
+exports.getLobbyConfigs = async (req, res) => {
+  try {
+    const configs = await LobbyConfig.find().sort({ createdAt: -1 });
+    res.json(configs);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
