@@ -1,12 +1,23 @@
 const mongoose = require("mongoose");
 
-const submissionSchema = new mongoose.Schema({
-  teamName: { type: String, required: true },
-  whatsapp: { type: String, required: true },
-  time: { type: String, required: true },
-  fee: { type: Number, required: true },
-  screenshot: { type: String, required: true },
-  status: { type: String, default: "pending" }
-}, { timestamps: true });
+const registrationSchema = new mongoose.Schema({
+  teamName: String,
+  whatsapp: String,
+  time: String,
+  fee: Number,
+  screenshot: String,
 
-module.exports = mongoose.model("Submission", submissionSchema);
+  // 🔽 🔽 🔽 YAHI ADD KARNA HAI
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "rejected"],
+    default: "pending"
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model("Registration", registrationSchema);
