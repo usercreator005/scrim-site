@@ -24,6 +24,25 @@ const {
 router.post("/lobbyConfig", adminAuth, createOrUpdateLobbyConfig);
 router.get("/lobbyConfig", adminAuth, getLobbyConfigs);
 
+// Set lobby WhatsApp link for a specific time + fee
+router.post("/admin/lobbyLink", adminAuth, async (req, res) => {
+  const { time, fee, link } = req.body;
+  if (!time || !fee || !link) {
+    return res.status(400).json({ success: false, message: "Missing data" });
+  }
+
+  try {
+    // Update all accepted registrations with matching time + fee
+    await Registration.updateMany(
+      { time, fee },
+      { $set: { lobbyLink: link } }
+    );
+    res.json({ success: true, message: "Lobby link saved successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 /* ===============================
    MANUAL RESET ROUTES
 ================================ */
