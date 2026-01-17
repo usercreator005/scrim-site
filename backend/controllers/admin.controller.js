@@ -1,5 +1,6 @@
 const Registration = require("../models/Registration");
 const LobbyConfig = require("../models/LobbyConfig");
+const Lobby = require("../models/Lobby");
 
 exports.getAllRegistrations = async (req, res) => {
   const data = await Registration.find().sort({ createdAt: -1 });
@@ -93,5 +94,36 @@ exports.getLobbyConfigs = async (req, res) => {
     res.json(configs);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.createLobby = async (req, res) => {
+  try {
+    const { time, fee, lobbyNo, maxTeams, whatsappGroupLink } = req.body;
+
+    const exists = await Lobby.findOne({ time, fee, lobbyNo });
+    if (exists) {
+      return res.status(400).json({
+        success: false,
+        message: "Lobby already exists"
+      });
+    }
+
+    await Lobby.create({
+      time,
+      fee,
+      lobbyNo,
+      maxTeams,
+      whatsappGroupLink
+    });
+
+    res.json({
+      success: true,
+      message: "Lobby created successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
   }
 };
