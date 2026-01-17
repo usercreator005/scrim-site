@@ -159,7 +159,7 @@ async function loadRegistrations() {
 /* ===============================
    ADMIN ACTION (Accept / Reject)
 ================================ */
-async function adminAction(id, status, whatsappNumber) {
+async function adminAction(id, status, whatsappNumber, time = "", fee = "") {
   try {
     const res = await fetch(`${BACKEND_URL}/adminAction/${id}`, {
       method: "POST",
@@ -177,15 +177,19 @@ async function adminAction(id, status, whatsappNumber) {
     }
 
     // 📲 WhatsApp message
-    if (whatsappNumber) {
-      const message = `Hello! Your Free Fire Scrim registration has been ${status} 
-======Lobby Details=====
-Lobby No. - ${lobbyNo}
-Time - ${time}
-Fee - ₹${fee}.`;
-      const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
-      window.open(url, "_blank");
-    }
+    if (status === "accepted" && whatsappNumber) {
+  const message =
+`Hello! Your Free Fire Scrim registration has been ACCEPTED ✅
+
+🕒 Time: ${time}
+💰 Fee: ₹${fee}
+
+Please join lobby on time.
+All the best!`;
+
+  const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
 
     loadRegistrations();
   } catch (err) {
