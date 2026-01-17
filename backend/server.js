@@ -1,7 +1,15 @@
+require("dotenv").config();              // 1️⃣ ADD
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const connectDB = require("./config/db"); // 2️⃣ ADD
 const authRoutes = require("./routes/auth.routes");
+
+/* ===============================
+   CONNECT MONGO
+================================ */
+connectDB();                              // 3️⃣ ADD
+
 /* ===============================
    ROUTES IMPORT
 ================================ */
@@ -38,9 +46,6 @@ app.use("/", adminRoutes);
 app.get("/", (req, res) => {
   res.send("Scrim Backend Running");
 });
-
-
-
 
 /* ===============================
    SERVER START
