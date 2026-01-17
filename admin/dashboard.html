@@ -40,6 +40,59 @@
   <tbody id="adminTable"></tbody>
 </table>
 
+<hr style="margin:30px 0;">
+
+<h2 style="color:#ffcc00;">Lobby Settings (Admin)</h2>
+
+<div style="padding:10px; background:#1a1a1a; border-radius:10px;">
+
+  <!-- TIME -->
+  <label>Time:</label><br>
+  <select id="lobbyTime">
+    <option value="">Select Time</option>
+    <option value="12PM">12 PM</option>
+    <option value="3PM">3 PM</option>
+    <option value="6PM">6 PM</option>
+    <option value="9PM">9 PM</option>
+  </select>
+  <br><br>
+
+  <!-- FEE -->
+  <label>Entry Fee:</label><br>
+  <select id="lobbyFee">
+    <option value="">Select Fee</option>
+    <option value="20">₹20</option>
+    <option value="25">₹25</option>
+    <option value="30">₹30</option>
+  </select>
+  <br><br>
+
+  <!-- LOBBY NUMBER -->
+  <label>Lobby Number:</label><br>
+  <select id="lobbyNumber">
+    <option value="1">Lobby 1</option>
+    <option value="2">Lobby 2</option>
+    <option value="3">Lobby 3</option>
+    <option value="4">Lobby 4</option>
+  </select>
+  <br><br>
+
+  <!-- TEAM LIMIT -->
+  <label>Max Teams in this Lobby:</label><br>
+  <input type="number" id="maxTeams" placeholder="Default 12" value="12">
+  <br><br>
+
+  <!-- WHATSAPP LINK -->
+  <label>WhatsApp Group Link:</label><br>
+  <input type="text" id="whatsappLink" placeholder="https://chat.whatsapp.com/xxxxx">
+  <br><br>
+
+  <button onclick="saveLobbyConfig()" class="accept">
+    Save Lobby Settings
+  </button>
+
+</div>
+
 <h2>Daily Reset</h2>
 <p>Last reset: <span id="lastReset">Loading...</span></p>
 <button onclick="manualReset()">Manual Reset Now</button>
