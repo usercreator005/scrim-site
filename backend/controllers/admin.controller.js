@@ -1,6 +1,7 @@
 const Registration = require("../models/Registration");
 const LobbyConfig = require("../models/LobbyConfig");
 const Lobby = require("../models/Lobby");
+const { assignLobby } = require("./lobby.logic");
 
 exports.getAllRegistrations = async (req, res) => {
   const data = await Registration.find().sort({ createdAt: -1 });
