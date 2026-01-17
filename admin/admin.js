@@ -11,17 +11,14 @@ function logout() {
   window.location.href = "login.html";
 }
 
-const tr = document.createElement("tr");
-tr.innerHTML = `
-  <td>${(index % 12) + 1}</td>
-  <td>${team.lobbyNo}</td>
-  <td colspan="5">${team.teamName}</td>
-`;
+/* ===============================
+   LOBBY CONFIGURATION FUNCTIONS
+================================ */
 async function saveLobbyConfig() {
   const time = document.getElementById("lobbyTime").value;
-  const fee = document.getElementById("lobbyFee").value;
-  const lobbyNo = document.getElementById("lobbyNumber").value;
-  const maxTeams = document.getElementById("maxTeams").value;
+  const fee = Number(document.getElementById("lobbyFee").value);
+  const lobbyNo = Number(document.getElementById("lobbyNumber").value);
+  const maxTeams = Number(document.getElementById("maxTeams").value);
   const whatsappLink = document.getElementById("whatsappLink").value;
 
   if (!time || !fee || !lobbyNo || !maxTeams) {
@@ -36,23 +33,17 @@ async function saveLobbyConfig() {
         "Content-Type": "application/json",
         "x-admin-token": ADMIN_TOKEN
       },
-      body: JSON.stringify({
-        time,
-        fee,
-        lobbyNo,
-        maxTeams,
-        whatsappLink
-      })
+      body: JSON.stringify({ time, fee, lobbyNo, maxTeams, whatsappLink })
     });
-
     const data = await res.json();
     alert(data.message || "Lobby saved");
-
+    loadLobbies();
   } catch (err) {
     console.error(err);
     alert("Failed to save lobby");
   }
 }
+
 async function loadLobbyLimits() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/lobbyLimits`, {
@@ -93,8 +84,71 @@ async function updateLobbyLimit(id, value) {
   }
 }
 
+async function saveLobbyLink() {
+  const select = document.getElementById("lobbyTimeFeeSelect");
+  const link = document.getElementById("lobbyLinkInput").value.trim();
+
+  if (!select.value || !link) {
+    alert("Select lobby and enter link");
+    return;
+  }
+
+  const [time, fee] = select.value.split("_");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbyLink`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ time, fee, link })
+    });
+    const data = await res.json();
+    document.getElementById("lobbyLinkStatus").innerText = data.message;
+    loadRegistrations(); // Refresh registrations table
+    loadLobbies();       // Refresh lobby table
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save link");
+  }
+}
+
+async function loadLobbies() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+    const lobbies = await res.json();
+    const tbody = document.getElementById("lobbyTable");
+    tbody.innerHTML = "";
+
+    lobbies.forEach(lobby => {
+      const remaining = lobby.maxTeams - lobby.currentTeams;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${lobby.time}</td>
+        <td>₹${lobby.fee}</td>
+        <td>${lobby.lobbyNo}</td>
+        <td>${lobby.maxTeams}</td>
+        <td>${lobby.currentTeams}</td>
+        <td style="color:${remaining === 0 ? 'red' : 'lightgreen'}">${remaining}</td>
+        <td>
+          <a href="${lobby.whatsappGroupLink || '#'}" target="_blank">
+            ${lobby.whatsappGroupLink ? 'Open' : 'N/A'}
+          </a>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error("Load lobbies failed", err);
+  }
+}
+
 /* ===============================
-   LOAD LAST RESET
+   LAST RESET
 ================================ */
 async function loadLastReset() {
   try {
@@ -119,6 +173,7 @@ async function manualReset() {
     alert(data.message);
     loadLastReset();
     loadRegistrations();
+    loadLobbies();
   } catch (err) {
     console.error(err);
     alert("Reset failed");
@@ -144,11 +199,8 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    /* ===============================
-       1️⃣ PENDING REGISTRATIONS (FULL)
-    =============================== */
+    // PENDING REGISTRATIONS
     const pending = data.filter(r => r.status === "pending");
-
     pending.forEach(reg => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -157,41 +209,19 @@ async function loadRegistrations() {
         <td>${reg.time}</td>
         <td>${reg.fee}</td>
         <td>
-          <a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">
-            View
-          </a>
+          <a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">View</a>
         </td>
         <td class="status-pending">pending</td>
         <td>
-          <button class="accept"
-            onclick="adminAction(
-  '${reg._id}',
-  'accepted',
-  '${reg.whatsapp}',
-  '${reg.time}',
-  '${reg.fee}'
-)">
-            Accept
-          </button>
-          <button class="reject"
-            onclick="adminAction(
-  '${reg._id}',
-  'rejected',
-  '${reg.whatsapp}'
-)">
-            Reject
-          </button>
+          <button class="accept" onclick="adminAction('${reg._id}','accepted','${reg.whatsapp}','${reg.time}','${reg.fee}')">Accept</button>
+          <button class="reject" onclick="adminAction('${reg._id}','rejected','${reg.whatsapp}')">Reject</button>
         </td>
       `;
       tbody.appendChild(tr);
     });
 
-    /* ===============================
-       2️⃣ ACCEPTED → SIMPLE LOBBY VIEW
-    =============================== */
+    // ACCEPTED → LOBBY VIEW
     const accepted = data.filter(r => r.status === "accepted");
-
-    // Group by time + fee
     const groups = {};
     accepted.forEach(r => {
       const key = `${r.time}_${r.fee}`;
@@ -204,31 +234,15 @@ async function loadRegistrations() {
       const [time, fee] = key.split("_");
 
       teams.forEach((team, index) => {
-
-        // Every 12 teams = new lobby heading
         if (index % 12 === 0) {
           const lobbyNo = Math.floor(index / 12) + 1;
-
           const lobbyRow = document.createElement("tr");
-          lobbyRow.innerHTML = `
-            <td colspan="7" style="
-              background:#222;
-              color:#ffcc00;
-              font-weight:bold;
-              text-align:center;
-            ">
-              Lobby No: ${lobbyNo} | Time: ${time} | Fee: ₹${fee}
-            </td>
-          `;
+          lobbyRow.innerHTML = `<td colspan="7" style="background:#222;color:#ffcc00;font-weight:bold;text-align:center;">Lobby No: ${lobbyNo} | Time: ${time} | Fee: ₹${fee}</td>`;
           tbody.appendChild(lobbyRow);
         }
 
-        // Team row (ONLY Sr.No + Team Name)
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td colspan="2">${(index % 12) + 1}</td>
-          <td colspan="5">${team.teamName}</td>
-        `;
+        tr.innerHTML = `<td colspan="2">${(index % 12) + 1}</td><td colspan="5">${team.teamName}</td>`;
         tbody.appendChild(tr);
       });
     });
@@ -258,146 +272,34 @@ async function adminAction(id, status, whatsappNumber, time = "", fee = "") {
       return;
     }
 
-    // 📲 WhatsApp message
+    // WhatsApp message for accepted teams
     if (status === "accepted" && whatsappNumber) {
-  const message =
-`Hello! Your Free Fire Scrim registration has been ACCEPTED ✅
+      // Fetch latest team info to get lobby link
+      const registrations = await fetch(`${BACKEND_URL}/adminRegs`, { headers: { "x-admin-token": ADMIN_TOKEN } });
+      const data = await registrations.json();
+      const team = data.find(r => r._id === id);
 
-🕒 Time: ${time}
-💰 Fee: ₹${fee}
+      let message = `Hello! Your Free Fire Scrim registration has been ACCEPTED ✅\n🕒 Time: ${time}\n💰 Fee: ₹${fee}`;
+      if (team && team.lobbyLink) {
+        message += `\nJoin Lobby: ${team.lobbyLink}`;
+      }
 
-Please join lobby on time.
-All the best!`;
-
-  const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
-}
+      const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
 
     loadRegistrations();
+    loadLobbies();
+
   } catch (err) {
     console.error("Admin action failed:", err);
   }
 }
-async function saveLobbyLink() {
-  const select = document.getElementById("lobbyTimeFeeSelect");
-  const link = document.getElementById("lobbyLinkInput").value.trim();
 
-  if (!select.value || !link) {
-    alert("Select lobby and enter link");
-    return;
-  }
-
-  const [time, fee] = select.value.split("_");
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/admin/lobbyLink`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": ADMIN_TOKEN
-      },
-      body: JSON.stringify({ time, fee, link })
-    });
-    const data = await res.json();
-    document.getElementById("lobbyLinkStatus").innerText = data.message;
-    loadRegistrations(); // Refresh table
-  } catch (err) {
-    console.error(err);
-    alert("Failed to save link");
-  }
-}
-
-async function loadLobbies() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
-    });
-
-    const lobbies = await res.json();
-    const tbody = document.getElementById("lobbyTable");
-    tbody.innerHTML = "";
-
-    lobbies.forEach(lobby => {
-      const remaining = lobby.maxTeams - lobby.currentTeams;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${lobby.time}</td>
-        <td>₹${lobby.fee}</td>
-        <td>${lobby.lobbyNo}</td>
-        <td>${lobby.maxTeams}</td>
-        <td>${lobby.currentTeams}</td>
-        <td style="color:${remaining === 0 ? 'red' : 'lightgreen'}">
-          ${remaining}
-        </td>
-        <td>
-          <a href="${lobby.whatsappGroupLink}" target="_blank">
-            Open
-          </a>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-  } catch (err) {
-    console.error("Load lobbies failed", err);
-  }
-}
-
-async function createLobby() {
-  const time = document.getElementById("lobbyTime").value;
-  const fee = Number(document.getElementById("lobbyFee").value);
-  const lobbyNo = Number(document.getElementById("lobbyNo").value);
-  const maxTeams = Number(document.getElementById("maxTeams").value);
-  const whatsappGroupLink = document.getElementById("wpLink").value;
-
-  if (!time || !fee || !lobbyNo || !whatsappGroupLink) {
-    alert("All fields required");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/admin/createLobby`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": ADMIN_TOKEN
-      },
-      body: JSON.stringify({
-        time,
-        fee,
-        lobbyNo,
-        maxTeams,
-        whatsappGroupLink
-      })
-    });
-
-    const data = await res.json();
-    alert(data.message || "Lobby created");
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to create lobby");
-  }
-}
-if (status === "accepted" && whatsappNumber) {
-  let message = `Hello! Your Free Fire Scrim registration has been ACCEPTED ✅
-🕒 Time: ${time}
-💰 Fee: ₹${fee}`;
-
-  // Get lobby link for this team
-  const team = data.find(r => r._id === id);
-  if (team && team.lobbyLink) {
-    message += `\nJoin Lobby: ${team.lobbyLink}`;
-  }
-
-  const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
-}
 /* ===============================
    INIT
 ================================ */
 loadRegistrations();
-loadLobbyLimits(); // call at the bottom of admin.js
+loadLobbyLimits();
 loadLastReset();
 loadLobbies();
