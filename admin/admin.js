@@ -11,6 +11,43 @@ function logout() {
   window.location.href = "login.html";
 }
 
+async function saveLobbyConfig() {
+  const time = document.getElementById("lobbyTime").value;
+  const fee = document.getElementById("lobbyFee").value;
+  const lobbyNo = document.getElementById("lobbyNumber").value;
+  const maxTeams = document.getElementById("maxTeams").value;
+  const whatsappLink = document.getElementById("whatsappLink").value;
+
+  if (!time || !fee || !lobbyNo || !maxTeams) {
+    alert("Please fill all lobby fields");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbyConfig`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({
+        time,
+        fee,
+        lobbyNo,
+        maxTeams,
+        whatsappLink
+      })
+    });
+
+    const data = await res.json();
+    alert(data.message || "Lobby saved");
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save lobby");
+  }
+}
+
 /* ===============================
    LOAD LAST RESET
 ================================ */
