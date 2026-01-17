@@ -12,6 +12,45 @@ exports.adminAction = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
+  if (!status) {
+    return res.status(400).json({ message: "Status required" });
+  }
+
+  // 1️⃣ Registration find karo
+  const reg = await Registration.findById(id);
+
+  if (!reg) {
+    return res.status(404).json({ message: "Registration not found" });
+  }
+
+  let lobbyNo = null;
+
+  // 2️⃣ Sirf ACCEPT pe lobby assign hoga
+  if (status === "accepted") {
+
+    // Same time + fee ke accepted count
+    const count = await Registration.countDocuments({
+      time: reg.time,
+      fee: reg.fee,
+      status: "accepted"
+    });
+
+    // 12 teams per lobby
+    lobbyNo = Math.floor(count / 12) + 1;
+  }
+
+  // 3️⃣ Update DB
+  reg.status = status;
+  reg.lobbyNo = lobbyNo;
+  await reg.save();
+
+  res.json({
+    success: true,
+    message: "Status updated",
+    lobbyNo
+  });
+};
+
   const reg = await Registration.findById(id);
   if (!reg) return res.status(404).json({ success:false });
 
