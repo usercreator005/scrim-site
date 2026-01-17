@@ -53,6 +53,45 @@ async function saveLobbyConfig() {
     alert("Failed to save lobby");
   }
 }
+async function loadLobbyLimits() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbyLimits`, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+    const data = await res.json();
+    const container = document.getElementById("lobbyLimitsContainer");
+    container.innerHTML = "";
+
+    data.forEach(limit => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        Time: ${limit.time} | Fee: ₹${limit.fee} 
+        | Max Lobby: <input type="number" value="${limit.maxLobby}" min="1" 
+          onchange="updateLobbyLimit('${limit._id}', this.value)">
+      `;
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Load lobby limits failed:", err);
+  }
+}
+
+async function updateLobbyLimit(id, value) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbyLimits`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ _id: id, maxLobby: Number(value) })
+    });
+    const data = await res.json();
+    alert(data.message);
+  } catch (err) {
+    console.error("Update lobby limit failed:", err);
+  }
+}
 
 /* ===============================
    LOAD LAST RESET
