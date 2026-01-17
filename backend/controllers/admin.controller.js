@@ -10,7 +10,7 @@ exports.getAllRegistrations = async (req, res) => {
 };
 
 /* ===============================
-   ADMIN ACTION: Accept / Reject
+   ADMIN ACTION (ACCEPT/REJECT)
 ================================ */
 exports.adminAction = async (req, res) => {
   try {
@@ -22,86 +22,52 @@ exports.adminAction = async (req, res) => {
     const reg = await Registration.findById(id);
     if (!reg) return res.status(404).json({ success:false, message:"Registration not found" });
 
-    let lobbyNo = null;
+    reg.status = status;
 
-    if(status === "accepted"){
-      // Count accepted for same time+fee
-      const count = await Registration.countDocuments({
-        time: reg.time,
-        fee: reg.fee,
-        status: "accepted"
-      });
-
-      // Calculate lobby number
-      lobbyNo = Math.floor(count / 12) + 1;
-
-      reg.lobbyNo = lobbyNo;
+    if(status === "accepted") {
+      // Get lobby link if already saved
+      const lobbyLimit = await LobbyLimit.findOne({ time: reg.time, fee: reg.fee });
+      if(lobbyLimit && lobbyLimit.lobbyLink) {
+        reg.lobbyLink = lobbyLimit.lobbyLink;
+      }
     }
 
-    reg.status = status;
     await reg.save();
 
-    res.json({
-      success:true,
-      message:"Status updated",
-      lobbyNo,
-      lobbyLink: reg.lobbyLink || ""
-    });
-
-  } catch(err){
+    res.json({ success:true, message:"Status updated", lobbyLink: reg.lobbyLink });
+  } catch(err) {
     console.error(err);
     res.status(500).json({ success:false, message:"Server error" });
   }
 };
 
 /* ===============================
-   LOBBY LIMITS
+   GET LOBBY LIMITS
 ================================ */
 exports.getLobbyLimits = async (req, res) => {
   const limits = await LobbyLimit.find().sort({ time:1, fee:1 });
   res.json(limits);
 };
 
+/* ===============================
+   SET / UPDATE LOBBY LIMIT
+================================ */
 exports.setLobbyLimit = async (req, res) => {
   try {
-    const { time, fee, maxLobby } = req.body;
-    if(!time || !fee || !maxLobby)
-      return res.status(400).json({ success:false, message:"All fields required" });
+    const { time, fee, maxLobby, lobbyLink } = req.body;
+    if(!time || !fee || !maxLobby) return res.status(400).json({ success:false, message:"All fields required" });
 
-    let existing = await LobbyLimit.findOne({ time, fee });
-
-    if(existing){
+    const existing = await LobbyLimit.findOne({ time, fee });
+    if(existing) {
       existing.maxLobby = maxLobby;
+      if(lobbyLink) existing.lobbyLink = lobbyLink;
       await existing.save();
-      return res.json({ success:true, message:"Lobby limit updated" });
+    } else {
+      await LobbyLimit.create({ time, fee, maxLobby, lobbyLink: lobbyLink || "" });
     }
 
-    await LobbyLimit.create({ time, fee, maxLobby });
-    res.json({ success:true, message:"Lobby limit set" });
-
-  } catch(err){
-    console.error(err);
-    res.status(500).json({ success:false, message:"Server error" });
-  }
-};
-
-/* ===============================
-   SET LOBBY WHATSAPP LINK
-================================ */
-exports.setLobbyLink = async (req,res)=>{
-  try{
-    const { time, fee, link } = req.body;
-    if(!time || !fee || !link)
-      return res.status(400).json({ success:false, message:"Missing data" });
-
-    await Registration.updateMany(
-      { time, fee, status:"accepted" },
-      { $set:{ lobbyLink: link } }
-    );
-
-    res.json({ success:true, message:"Lobby link saved" });
-
-  } catch(err){
+    res.json({ success:true, message:"Lobby limit saved successfully" });
+  } catch(err) {
     console.error(err);
     res.status(500).json({ success:false, message:"Server error" });
   }
