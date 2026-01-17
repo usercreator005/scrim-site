@@ -356,5 +356,6 @@ async function createLobby() {
    INIT
 ================================ */
 loadRegistrations();
+loadLobbyLimits(); // call at the bottom of admin.js
 loadLastReset();
 loadLobbies();
