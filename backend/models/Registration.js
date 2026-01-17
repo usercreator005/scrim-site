@@ -1,33 +1,20 @@
 const mongoose = require("mongoose");
 
-const registrationSchema = new mongoose.Schema({
+const submissionSchema = new mongoose.Schema({
   teamName: String,
   whatsapp: String,
   time: String,
   fee: Number,
   screenshot: String,
 
-  // 🔽 🔽 🔽 YAHI ADD KARNA HAI
-  status: {
-    type: String,
-    enum: ["pending", "accepted", "rejected"],
-    default: "pending"
-  },
+  status: { type: String, default: "pending" },
 
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }, 
-lobbyNo: {
-  type: Number,
-  default: null
-},
+  lobbyNo: Number,                // 🆕 assigned lobby
+  lobbyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Lobby"
+  }
 
-whatsappGroupLink: {
-  type: String,
-  default: ""
-}
-});
+}, { timestamps: true });
 
-
-module.exports = mongoose.model("Registration", registrationSchema);
+module.exports = mongoose.model("Registration", submissionSchema);
