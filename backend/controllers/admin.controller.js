@@ -195,3 +195,31 @@ exports.createLobby = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
+
+const LobbyLimit = require("../models/LobbyLimit");
+
+// GET lobby limits
+exports.getLobbyLimits = async (req, res) => {
+  const limits = await LobbyLimit.find().sort({ time: 1, fee: 1 });
+  res.json(limits);
+};
+
+// SET / UPDATE lobby limit
+exports.setLobbyLimit = async (req, res) => {
+  const { time, fee, maxLobby } = req.body;
+
+  if (!time || !fee || !maxLobby) {
+    return res.status(400).json({ success: false, message: "All fields required" });
+  }
+
+  const existing = await LobbyLimit.findOne({ time, fee });
+
+  if (existing) {
+    existing.maxLobby = maxLobby;
+    await existing.save();
+  } else {
+    await LobbyLimit.create({ time, fee, maxLobby });
+  }
+
+  res.json({ success: true, message: "Lobby limit set successfully" });
+};
