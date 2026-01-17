@@ -79,14 +79,14 @@ async function loadRegistrations() {
             View
           </a>
         </td>
-        <td class="status-pending">Pending</td>
+        <td class="status-pending">pending</td>
         <td>
           <button class="accept"
-            onclick="adminAction(${reg._id}, 'Accepted', '${reg.whatsapp}')">
+            onclick="adminAction(${reg._id}, 'accepted', '${reg.whatsapp}')">
             Accept
           </button>
           <button class="reject"
-            onclick="adminAction(${reg._id}, 'Rejected', '${reg.whatsapp}')">
+            onclick="adminAction(${reg._id}, 'rejected', '${reg.whatsapp}')">
             Reject
           </button>
         </td>
@@ -97,7 +97,7 @@ async function loadRegistrations() {
     /* ===============================
        2️⃣ ACCEPTED → SIMPLE LOBBY VIEW
     =============================== */
-    const accepted = data.filter(r => r.status === "Accepted");
+    const accepted = data.filter(r => r.status === "accepted");
 
     // Group by time + fee
     const groups = {};
@@ -168,7 +168,11 @@ async function adminAction(id, status, whatsappNumber) {
 
     // 📲 WhatsApp message
     if (whatsappNumber) {
-      const message = `Hello! Your Free Fire Scrim registration has been ${status}.`;
+      const message = `Hello! Your Free Fire Scrim registration has been ${status} 
+======Lobby Details=====
+Lobby No. - ${lobbyNo}
+Time - ${time}
+Fee - ₹${fee}.`;
       const url = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
