@@ -15,6 +15,14 @@ const { manualReset, getLastResetDate } = require("../services/reset.service");
 router.get("/adminRegs", adminAuth, getAllRegistrations);
 router.post("/adminAction/:id", adminAuth, adminAction);
 
+const {
+  createOrUpdateLobbyConfig,
+  getLobbyConfigs
+} = require("../controllers/adminController");
+
+router.post("/lobbyConfig", adminAuth, createOrUpdateLobbyConfig);
+router.get("/lobbyConfig", adminAuth, getLobbyConfigs);
+
 /* ===============================
    MANUAL RESET ROUTES
 ================================ */
