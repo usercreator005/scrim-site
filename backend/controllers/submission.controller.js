@@ -11,6 +11,9 @@ const {
 ================================ */
 exports.submitRegistration = async (req, res) => {
   try {
+console.log("FILE:", req.file);
+console.log("BODY:", req.body);
+
     const { teamName, whatsapp, time, fee } = req.body;
     const paymentSS = req.file;
 
