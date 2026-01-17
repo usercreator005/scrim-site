@@ -18,6 +18,16 @@ const registrationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+lobbyNo: {
+  type: Number,
+  default: null
+},
+
+whatsappGroupLink: {
+  type: String,
+  default: ""
+}
 });
+
 
 module.exports = mongoose.model("Registration", registrationSchema);
