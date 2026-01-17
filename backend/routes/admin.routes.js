@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const Registration = require("../models/Registration");
 const adminAuth = require("../middlewares/adminAuth.middleware");
-const { createLobby } = require("../controllers/admin.controller");
-const { getAllLobbies } = require("../controllers/lobby.controller");
+
 const {
+  createLobby,
   getAllRegistrations,
-  adminAction
+  adminAction,
+  getLobbyLimits,
+  setLobbyLimit
 } = require("../controllers/admin.controller");
 
 const { manualReset, getLastResetDate } = require("../services/reset.service");
@@ -16,15 +19,16 @@ const { manualReset, getLastResetDate } = require("../services/reset.service");
 router.get("/adminRegs", adminAuth, getAllRegistrations);
 router.post("/adminAction/:id", adminAuth, adminAction);
 
-const {
-  createOrUpdateLobbyConfig,
-  getLobbyConfigs
-} = require("../controllers/adminController");
+/* ===============================
+   LOBBY CONFIGURATION
+================================ */
+// Set or update lobby limit for time + fee
+router.post("/admin/lobbyLimits", adminAuth, setLobbyLimit);
 
-router.post("/lobbyConfig", adminAuth, createOrUpdateLobbyConfig);
-router.get("/lobbyConfig", adminAuth, getLobbyConfigs);
+// Get all lobby limits
+router.get("/admin/lobbyLimits", adminAuth, getLobbyLimits);
 
-// Set lobby WhatsApp link for a specific time + fee
+// Set WhatsApp link for a specific lobby (time + fee)
 router.post("/admin/lobbyLink", adminAuth, async (req, res) => {
   const { time, fee, link } = req.body;
   if (!time || !fee || !link) {
@@ -43,11 +47,10 @@ router.post("/admin/lobbyLink", adminAuth, async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
 /* ===============================
    MANUAL RESET ROUTES
 ================================ */
-
-// Trigger manual reset
 router.post("/admin/manualReset", adminAuth, (req, res) => {
   try {
     manualReset();
@@ -58,7 +61,6 @@ router.post("/admin/manualReset", adminAuth, (req, res) => {
   }
 });
 
-// Get last reset date
 router.get("/admin/lastReset", adminAuth, (req, res) => {
   try {
     const lastReset = getLastResetDate();
@@ -68,15 +70,11 @@ router.get("/admin/lastReset", adminAuth, (req, res) => {
     res.status(500).json({ success: false, message: "Could not fetch last reset" });
   }
 });
+
+/* ===============================
+   LOBBY CREATION / FETCH
+================================ */
 router.post("/admin/createLobby", adminAuth, createLobby);
-router.get("/admin/lobbies", adminAuth, getAllLobbies);
-const { getLobbyLimits, setLobbyLimit } = require("../controllers/admin.controller");
-
-// Get all lobby limits
-router.get("/admin/lobbyLimits", adminAuth, getLobbyLimits);
-
-// Set / update lobby limit
-router.post("/admin/lobbyLimits", adminAuth, setLobbyLimit);
-
+router.get("/admin/lobbies", adminAuth, require("../controllers/lobby.controller").getAllLobbies);
 
 module.exports = router;
