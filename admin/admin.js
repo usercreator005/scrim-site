@@ -312,3 +312,4 @@ async function createLobby() {
 ================================ */
 loadRegistrations();
 loadLastReset();
+loadLobbies();
