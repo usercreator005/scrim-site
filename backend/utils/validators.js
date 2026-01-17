@@ -35,7 +35,7 @@ function validateWhatsapp(whatsapp) {
 /* SLOT + FEE */
 function validateSlotFee(time, fee) {
   const allowedTimes = ["12:00 PM", "3:00 PM", "9:00 PM"];
-  const allowedFees = ["₹20", "₹25", "₹30"];
+  const allowedFees = [20, 25,30];
 
   if (!allowedTimes.includes(time)) {
     return "Invalid time slot selected";
