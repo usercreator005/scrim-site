@@ -281,12 +281,34 @@ async function adminAction(id, status, whatsapp, time = "", fee = "") {
     });
 
     if (status === "accepted") {
-      const msg = `Your scrim registration is ACCEPTED ✅\nTime: ${time}\nFee: ₹${fee}`;
-      window.open(`https://wa.me/91${whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
+
+      // 🔥 get updated registration (with lobbyLink)
+      const res = await fetch(`${BACKEND_URL}/adminRegs`, {
+        headers: { "x-admin-token": ADMIN_TOKEN }
+      });
+      const regs = await res.json();
+      const team = regs.find(r => r._id === id);
+
+      let msg =
+`🎮 *SCRIM ACCEPTED* ✅
+
+👥 Team: ${team.teamName}
+🕒 Time: ${team.time}
+💰 Fee: ₹${team.fee}`;
+
+      if (team?.lobbyLink) {
+        msg += `\n\n🔗 Lobby Link:\n${team.lobbyLink}`;
+      }
+
+      window.open(
+        `https://wa.me/91${whatsapp}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
     }
 
     loadRegistrations();
     loadLobbies();
+
   } catch (err) {
     console.error("Admin action failed:", err);
   }
