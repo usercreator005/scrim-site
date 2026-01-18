@@ -4,7 +4,13 @@ const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db"); // 2️⃣ ADD
 const authRoutes = require("./routes/auth.routes");
+process.on("uncaughtException", err => {
+  console.error("UNCAUGHT:", err);
+});
 
+process.on("unhandledRejection", err => {
+  console.error("UNHANDLED:", err);
+});
 /* ===============================
    CONNECT MONGO
 ================================ */
