@@ -27,7 +27,7 @@ async function saveLobbyConfig() {
   }
 
   try {
-    const res = await fetch(`${BACKEND_URL}/admin/lobbyConfig`, {
+    const res = await fetch(`${BACKEND_URL}/models/lobbyConfig`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
