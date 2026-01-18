@@ -134,6 +134,9 @@ async function loadLobbies() {
         <td>${lobby.lobbyNo}</td>
         <td>${lobby.maxLobby}</td>
         <td>${lobby.currentTeams}</td>
+        <td>${lobby.maxLobby} Lobbies</td>
+<td>${lobby.currentTeams}</td>
+<td>${remaining}</td>
         <td style="color:${remaining === 0 ? 'red' : 'lightgreen'}">${remaining}</td>
         <td>
           <a href="${lobby.whatsappGroupLink || '#'}" target="_blank">
