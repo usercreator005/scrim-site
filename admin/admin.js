@@ -162,10 +162,9 @@ Team: ${team.teamName}
 Time: ${team.time}
 Fee: ₹${team.fee}`;
 
-    if (team.lobbyLink) {
-      msg += `\n\nLobby Link:\n${team.lobbyLink}`;
-    }
-
+    if (team.whatsappGroupLink) {
+  msg += `\n\n📲 WhatsApp Lobby Link:\n${team.whatsappGroupLink}`;
+}
     window.open(
       `https://wa.me/91${whatsapp}?text=${encodeURIComponent(msg)}`
     );
