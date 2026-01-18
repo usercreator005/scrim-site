@@ -347,5 +347,6 @@ async function manualReset() {
 ================================ */
 loadRegistrations();
 loadLobbies();
+loadLastReset();
 loadLobbyLimits();
 loadLobbyTimeFeeOptions();
