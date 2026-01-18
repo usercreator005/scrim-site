@@ -4,135 +4,225 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
+
 <style>
-  body { font-family: Arial, sans-serif; background: #111; color: #fff; margin:0; padding:0; }
-  h1 { text-align:center; color:#ffcc00; padding:10px; }
-  button { padding:6px 12px; margin:3px; border-radius:8px; border:none; cursor:pointer; transition:0.2s ease; }
-  button:hover{ transform:scale(1.05); opacity:0.9; } button:active{ transform:scale(0.95);}
-  button.accept{background-color:#4CAF50;color:#fff;} button.reject{background-color:#f44336;color:#fff;}
-  table{width:100%; border-collapse:collapse; font-size:14px;} th, td{padding:10px;text-align:center;}
-  th{background-color:#222;color:#ffcc00;} td{border-bottom:1px solid #333;}
-  tr:nth-child(even){background-color:#161616;} tr:hover{background-color:#1f1f1f;}
-  a{color:#ffcc00;text-decoration:none;}
-  .status-pending{color:#ffcc00;font-weight:bold;}
-  .status-accepted{color:#4CAF50;font-weight:bold;}
-  .status-rejected{color:#f44336;font-weight:bold;}
-  @media(max-width:480px){table{font-size:12px;} th,td{padding:6px;} button{width:100%; margin-bottom:4px;}}
+:root{
+  --bg:#0f0f0f;
+  --card:#1a1a1a;
+  --border:#2a2a2a;
+  --yellow:#ffcc00;
+  --green:#4caf50;
+  --red:#f44336;
+  --text:#ffffff;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+h1,h2{
+  text-align:center;
+  color:var(--yellow);
+  margin:15px 0;
+}
+
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.2s;
+}
+
+button:hover{transform:scale(1.05);}
+button:active{transform:scale(0.95);}
+
+.accept{background:var(--green);color:#fff;}
+.reject{background:var(--red);color:#fff;}
+
+.logout{
+  background:#333;
+  color:#fff;
+  display:block;
+  margin:10px auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  font-size:14px;
+}
+
+th,td{
+  padding:10px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+}
+
+th{
+  background:#1f1f1f;
+  color:var(--yellow);
+}
+
+tr:nth-child(even){background:#141414;}
+tr:hover{background:#1f1f1f;}
+
+a{color:var(--yellow);text-decoration:none;}
+
+.section{
+  background:var(--card);
+  margin:20px;
+  padding:15px;
+  border-radius:12px;
+}
+
+.form-group{
+  margin-bottom:12px;
+}
+
+select,input{
+  width:100%;
+  padding:8px;
+  background:#111;
+  color:#fff;
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+
+small{color:#aaa;}
+
+@media(max-width:600px){
+  table{font-size:12px;}
+  th,td{padding:6px;}
+}
 </style>
 </head>
+
 <body>
 
-<h1>Admin Dashboard</h1>
-<button onclick="logout()">Logout</button>
+<h1>🔥 Admin Dashboard</h1>
+<button class="logout" onclick="logout()">Logout</button>
 
-<hr>
-
-
-
-
-
-
-
-<table border="2">
-  <thead>
-    <tr>
-      <th>Team</th>
-      <th>WhatsApp</th>
-      <th>Time</th>
-      <th>Fee</th>
-      <th>Payment Screenshot</th>
-      <th>Status</th>
-<th>Lobby No</th>
-<th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="adminTable"></tbody>
+<!-- REGISTRATIONS -->
+<div class="section">
+<h2>Registrations</h2>
+<table>
+<thead>
+<tr>
+  <th>Team</th>
+  <th>WhatsApp</th>
+  <th>Time</th>
+  <th>Fee</th>
+  <th>Screenshot</th>
+  <th>Status</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody id="adminTable"></tbody>
 </table>
+</div>
+
+<!-- LOBBY STATUS -->
+<div class="section">
 <h2>Lobby Status</h2>
-
-<table border="2">
-  <thead>
-    <tr>
-      <th>Time</th>
-      <th>Fee</th>
-      <th>Lobby No</th>
-      <th>Max</th>
-      <th>Joined</th>
-      <th>Remaining</th>
-      <th>WhatsApp</th>
-    </tr>
-  </thead>
-  <tbody id="lobbyTable"></tbody>
+<table>
+<thead>
+<tr>
+  <th>Time</th>
+  <th>Fee</th>
+  <th>Lobby No</th>
+  <th>Max Lobbies</th>
+  <th>Joined</th>
+  <th>Remaining</th>
+  <th>WhatsApp</th>
+</tr>
+</thead>
+<tbody id="lobbyTable"></tbody>
 </table>
-
-<hr style="margin:30px 0;">
-
-<h2 style="color:#ffcc00;">Lobby Settings (Admin)</h2>
-
-<div style="padding:10px; background:#1a1a1a; border-radius:10px;">
-
-  <!-- TIME -->
-  <label>Time:</label><br>
-  <select id="lobbyTime">
-    <option value="">Select Time</option>
-    <option value="12PM">12 PM</option>
-    <option value="3PM">3 PM</option>
-    <option value="6PM">6 PM</option>
-    <option value="9PM">9 PM</option>
-  </select>
-  <br><br>
-
-  <!-- FEE -->
-  <label>Entry Fee:</label><br>
-  <select id="lobbyFee">
-    <option value="">Select Fee</option>
-    <option value="20">₹20</option>
-    <option value="25">₹25</option>
-    <option value="30">₹30</option>
-  </select>
-  <br><br>
-
-  <!-- LOBBY NUMBER -->
-  <label>Lobby Number:</label><br>
-  <select id="lobbyNumber">
-    <option value="1">Lobby 1</option>
-    <option value="2">Lobby 2</option>
-    <option value="3">Lobby 3</option>
-    <option value="4">Lobby 4</option>
-  </select>
-  <br><br>
-
-  <!-- TEAM LIMIT -->
-  <label>Max Teams in this Lobby:</label><br>
-  <input type="number" id="maxTeams" placeholder="Default 12" value="12">
-  <br><br>
-
-  <!-- WHATSAPP LINK -->
-  <label>WhatsApp Group Link:</label><br>
-  <input type="text" id="whatsappLink" placeholder="https://chat.whatsapp.com/xxxxx">
-  <br><br>
-
-  <button onclick="saveLobbyConfig()" class="accept">
-    Save Lobby Settings
-  </button>
-
 </div>
 
-<h2>Daily Reset</h2>
-<h2>Set Lobby WhatsApp Link</h2>
-<select id="lobbyTimeFeeSelect">
-  <option value="">Select Lobby (Time & Fee)</option>
-  <!-- Options will be dynamically loaded -->
+<!-- LOBBY SETTINGS -->
+<div class="section">
+<h2>Lobby Settings</h2>
+
+<div class="form-group">
+<label>Time</label>
+<select id="lobbyTime">
+  <option value="">Select Time</option>
+  <option value="12PM">12 PM</option>
+  <option value="3PM">3 PM</option>
+  <option value="6PM">6 PM</option>
+  <option value="9PM">9 PM</option>
 </select>
-<input type="text" id="lobbyLinkInput" placeholder="Paste WhatsApp group link here">
-<button onclick="saveLobbyLink()">Save Link</button>
-<p id="lobbyLinkStatus"></p>
-<h2>Lobby Limits</h2>
-<div id="lobbyLimitsContainer">
-  <!-- Limits will load here -->
 </div>
+
+<div class="form-group">
+<label>Entry Fee</label>
+<select id="lobbyFee">
+  <option value="">Select Fee</option>
+  <option value="20">₹20</option>
+  <option value="25">₹25</option>
+  <option value="30">₹30</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Lobby Number</label>
+<select id="lobbyNumber">
+  <option value="1">Lobby 1</option>
+  <option value="2">Lobby 2</option>
+  <option value="3">Lobby 3</option>
+  <option value="4">Lobby 4</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Max Lobbies</label>
+<input type="number" id="maxLobby" placeholder="Eg: 5">
+<small>Each lobby has 12 teams</small>
+</div>
+
+<div class="form-group">
+<label>WhatsApp Group Link</label>
+<input type="text" id="whatsappLink" placeholder="https://chat.whatsapp.com/...">
+</div>
+
+<button class="accept" onclick="saveLobbyConfig()">Save Lobby Settings</button>
+</div>
+
+<!-- LOBBY LINK -->
+<div class="section">
+<h2>Set Lobby WhatsApp Link</h2>
+
+<select id="lobbyTimeFeeSelect">
+  <option value="">Select Time & Fee</option>
+</select>
+
+<input type="text" id="lobbyLinkInput" placeholder="Paste WhatsApp group link">
+
+<button class="accept" onclick="saveLobbyLink()">Save Link</button>
+<p id="lobbyLinkStatus"></p>
+</div>
+
+<!-- LOBBY LIMITS -->
+<div class="section">
+<h2>Lobby Limits</h2>
+<div id="lobbyLimitsContainer"></div>
+</div>
+
+<!-- RESET -->
+<div class="section">
+<h2>Daily Reset</h2>
 <p>Last reset: <span id="lastReset">Loading...</span></p>
-<button onclick="manualReset()">Manual Reset Now</button>
+<button class="reject" onclick="manualReset()">Manual Reset Now</button>
+</div>
 
 <script src="admin.js"></script>
 </body>
