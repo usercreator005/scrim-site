@@ -18,10 +18,10 @@ async function saveLobbyConfig() {
   const time = document.getElementById("lobbyTime").value;
   const fee = Number(document.getElementById("lobbyFee").value);
   const lobbyNo = Number(document.getElementById("lobbyNumber").value);
-  const maxTeams = Number(document.getElementById("maxTeams").value);
+  const maxLobby = Number(document.getElementById("maxLobby").value);
   const whatsappLink = document.getElementById("whatsappLink").value;
 
-  if (!time || !fee || !lobbyNo || !maxTeams) {
+  if (!time || !fee || !lobbyNo || !maxLobby) {
     alert("Please fill all lobby fields");
     return;
   }
@@ -33,7 +33,7 @@ async function saveLobbyConfig() {
         "Content-Type": "application/json",
         "x-admin-token": ADMIN_TOKEN
       },
-      body: JSON.stringify({ time, fee, lobbyNo, maxTeams, whatsappLink })
+      body: JSON.stringify({ time, fee, lobbyNo, maxLobby, whatsappLink })
     });
 
     const data = await res.json();
@@ -125,13 +125,13 @@ async function loadLobbies() {
     tbody.innerHTML = "";
 
     lobbies.forEach(lobby => {
-      const remaining = lobby.maxTeams - lobby.currentTeams;
+      const remaining = lobby.maxLobby - lobby.currentTeams;
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${lobby.time}</td>
         <td>₹${lobby.fee}</td>
         <td>${lobby.lobbyNo}</td>
-        <td>${lobby.maxTeams}</td>
+        <td>${lobby.maxLobby}</td>
         <td>${lobby.currentTeams}</td>
         <td style="color:${remaining === 0 ? 'red' : 'lightgreen'}">${remaining}</td>
         <td>
