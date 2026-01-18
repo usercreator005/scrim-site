@@ -1,6 +1,7 @@
 const BACKEND_URL = "https://scrim-backend.onrender.com";
 const ADMIN_TOKEN = localStorage.getItem("adminToken");
-
+const TOTAL_SLOTS = lobby.maxLobby * 12;
+const remaining = TOTAL_SLOTS - lobby.currentTeams;
 if (!ADMIN_TOKEN) {
   alert("Session expired. Please login again.");
   window.location.href = "login.html";
