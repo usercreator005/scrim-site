@@ -74,7 +74,7 @@ router.get("/admin/lastReset", adminAuth, (req, res) => {
 /* ===============================
    LOBBY CREATION / FETCH
 ================================ */
-router.post("/admin/createLobby", adminAuth, createLobby);
+
 router.get("/admin/lobbies", adminAuth, require("../controllers/lobby.controller").getAllLobbies);
 
 module.exports = router;
