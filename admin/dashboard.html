@@ -7,118 +7,172 @@
 
 <style>
 :root{
-  --bg:#0f0f0f;
-  --card:#1a1a1a;
-  --border:#2a2a2a;
+  --bg:#0b0f14;
+  --card:#151a21;
+  --card-light:#1d2430;
+  --border:#2a3444;
   --yellow:#ffcc00;
   --green:#4caf50;
   --red:#f44336;
-  --text:#ffffff;
+  --blue:#2196f3;
+  --text:#eaeaea;
+  --muted:#9aa4b2;
 }
 
-*{box-sizing:border-box;}
+*{
+  box-sizing:border-box;
+  transition:all .25s ease;
+}
 
 body{
   margin:0;
-  font-family:Segoe UI,Arial,sans-serif;
-  background:var(--bg);
+  font-family:"Segoe UI",system-ui,-apple-system;
+  background:
+    radial-gradient(circle at top,#121826,#0b0f14 60%);
   color:var(--text);
 }
 
-h1,h2{
-  text-align:center;
-  color:var(--yellow);
-  margin:15px 0;
+/* HEADINGS */
+h1{
+  margin:18px 0 5px;
+  font-size:26px;
+  letter-spacing:1px;
+  text-shadow:0 0 20px #ffcc0030;
 }
-
-button{
-  padding:8px 14px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  transition:0.2s;
+h2{
+  margin-bottom:12px;
+  font-size:18px;
+  text-shadow:0 0 12px #ffcc0020;
+  position:relative;
 }
-
-button:hover{transform:scale(1.05);}
-button:active{transform:scale(0.95);}
-
-.accept{background:var(--green);color:#fff;}
-.reject{background:var(--red);color:#fff;}
-
-.logout{
-  background:#333;
-  color:#fff;
+h2::after{
+  content:"";
   display:block;
-  margin:10px auto;
+  width:40px;
+  height:3px;
+  background:linear-gradient(90deg,var(--yellow),transparent);
+  margin:6px auto 0;
+  border-radius:2px;
 }
 
+/* SECTIONS / CARDS */
+.section{
+  background:
+    linear-gradient(145deg,var(--card),var(--card-light));
+  margin:20px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.03);
+}
+.section:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 40px rgba(0,0,0,.75);
+}
+
+/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:10px;
   font-size:14px;
 }
-
 th,td{
   padding:10px;
   text-align:center;
   border-bottom:1px solid var(--border);
 }
-
 th{
-  background:#1f1f1f;
   color:var(--yellow);
+  background:#10141c;
+  position:sticky;
+  top:0;
+  z-index:1;
+}
+tr:nth-child(even){background:#121722;}
+tr:hover{
+  background:#1b2230;
 }
 
-tr:nth-child(even){background:#141414;}
-tr:hover{background:#1f1f1f;}
-
-a{color:var(--yellow);text-decoration:none;}
-
-.section{
-  background:var(--card);
-  margin:20px;
-  padding:15px;
-  border-radius:12px;
+/* LOBBY HEADER ROW */
+.lobby-header{
+  background:linear-gradient(90deg,#1a1f2b,#111827);
+  color:var(--yellow);
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:.5px;
 }
 
-.form-group{
-  margin-bottom:12px;
+/* BUTTONS */
+button{
+  padding:9px 16px;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.5);
+}
+button:hover{
+  transform:scale(1.06);
+  filter:brightness(1.1);
+}
+button:active{
+  transform:scale(.95);
 }
 
+.accept{
+  background:linear-gradient(135deg,#43a047,#66bb6a);
+  color:#fff;
+}
+.reject{
+  background:linear-gradient(135deg,#e53935,#ff5252);
+  color:#fff;
+}
+.logout{
+  background:linear-gradient(135deg,#2a2f3a,#444);
+  color:#fff;
+  display:block;
+  margin:12px auto;
+}
+
+/* INPUTS */
 select,input{
   width:100%;
-  padding:8px;
-  background:#111;
+  padding:10px;
+  background:#0e1420;
   color:#fff;
   border:1px solid var(--border);
-  border-radius:8px;
+  border-radius:10px;
+  outline:none;
+}
+select:focus,input:focus{
+  border-color:var(--yellow);
+  box-shadow:0 0 0 2px #ffcc0025;
 }
 
-small{color:#aaa;}
+/* LINKS */
+a{
+  color:var(--yellow);
+  text-decoration:none;
+  font-weight:500;
+}
+a:hover{
+  text-shadow:0 0 10px #ffcc0060;
+}
 
+/* STATUS COLORS */
+.status-pending{color:var(--yellow)}
+.status-accepted{color:var(--green)}
+.status-rejected{color:var(--red)}
+
+/* MOBILE OPTIMIZATION */
 @media(max-width:600px){
-  table{font-size:12px;}
-  th,td{padding:6px;}
-}
-.section {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-}
-
-.section h2 {
-  margin-bottom: 10px;
-  text-shadow: 0 0 10px #ffcc0055;
-}
-
-table td {
-  font-size: 13px;
-}
-
-.lobby-header {
-  background: linear-gradient(90deg,#222,#111);
-  color: #ffcc00;
-  font-weight: bold;
+  h1{font-size:22px}
+  h2{font-size:16px}
+  table{font-size:12px}
+  th,td{padding:6px}
+  .section{margin:12px}
 }
 </style>
 </head>
@@ -128,114 +182,68 @@ table td {
 <h1>🔥 Admin Dashboard</h1>
 <button class="logout" onclick="logout()">Logout</button>
 
-<!-- REGISTRATIONS -->
 <div class="section">
 <h2>Registrations</h2>
 <table>
 <thead>
 <tr>
-  <th>Team</th>
-  <th>WhatsApp</th>
-  <th>Time</th>
-  <th>Fee</th>
-  <th>Screenshot</th>
-  <th>Status</th>
-  <th>Action</th>
+<th>Team</th><th>WhatsApp</th><th>Time</th><th>Fee</th><th>Screenshot</th><th>Status</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="adminTable"></tbody>
 </table>
 </div>
 
-<!-- LOBBY STATUS -->
 <div class="section">
 <h2>Lobby Status</h2>
 <table>
 <thead>
 <tr>
-  <th>Time</th>
-  <th>Fee</th>
-  <th>Lobby No</th>
-  <th>Max Lobbies</th>
-  <th>Joined</th>
-  <th>Remaining</th>
-  <th>WhatsApp</th>
+<th>Time</th><th>Fee</th><th>Lobby</th><th>Max</th><th>Joined</th><th>Remaining</th><th>WhatsApp</th>
 </tr>
 </thead>
 <tbody id="lobbyTable"></tbody>
 </table>
 </div>
 
-<!-- LOBBY SETTINGS -->
 <div class="section">
 <h2>Lobby Settings</h2>
 
-<div class="form-group">
-<label>Time</label>
 <select id="lobbyTime">
-  <option value="">Select Time</option>
-  <option value="12PM">12 PM</option>
-  <option value="3PM">3 PM</option>
-  <option value="6PM">6 PM</option>
-  <option value="9PM">9 PM</option>
+<option value="">Select Time</option>
+<option value="12PM">12 PM</option>
+<option value="3PM">3 PM</option>
+<option value="9PM">9 PM</option>
 </select>
-</div>
 
-<div class="form-group">
-<label>Entry Fee</label>
 <select id="lobbyFee">
-  <option value="">Select Fee</option>
-  <option value="20">₹20</option>
-  <option value="25">₹25</option>
-  <option value="30">₹30</option>
+<option value="">Select Fee</option>
+<option value="20">₹20</option>
+<option value="25">₹25</option>
+<option value="30">₹30</option>
 </select>
+
+<input type="number" id="maxLobby" placeholder="Max lobbies">
+
+<button class="accept" onclick="saveLobbyConfig()">Save Lobby</button>
 </div>
 
-<div class="form-group">
-<label>Lobby Number</label>
-<select id="lobbyNumber">
-  <option value="1">Lobby 1</option>
-  <option value="2">Lobby 2</option>
-  <option value="3">Lobby 3</option>
-  <option value="4">Lobby 4</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Max Lobbies</label>
-<input type="number" id="maxLobby" placeholder="Eg: 5">
-<small>Each lobby has 12 teams</small>
-</div>
-
-
-<button class="accept" onclick="saveLobbyConfig()">Save Lobby Settings</button>
-</div>
-
-<!-- LOBBY LINK -->
 <div class="section">
 <h2>Set Lobby WhatsApp Link</h2>
-
-<select id="lobbyTimeFeeSelect">
-  <option value="">Select Time & Fee</option>
-</select>
-
-<input type="text" id="lobbyLinkInput" placeholder="Paste WhatsApp group link">
-
+<select id="lobbyTimeFeeSelect"></select>
+<input type="text" id="lobbyLinkInput" placeholder="Paste WhatsApp link">
 <button class="accept" onclick="saveLobbyLink()">Save Link</button>
-<p id="lobbyLinkStatus"></p>
 </div>
 
-<!-- LOBBY LIMITS -->
 <div class="section">
 <h2>Lobby Limits</h2>
 <div id="lobbyLimitsContainer"></div>
 </div>
 
-<!-- RESET -->
 <div class="section">
 <h2>Daily Reset</h2>
 <p>Last reset: <span id="lastReset">Loading...</span></p>
-<button class="reject" onclick="manualReset()">Manual Reset Now</button>
+<button class="reject" onclick="manualReset()">Manual Reset</button>
 </div>
 
 <script src="admin.js"></script>
