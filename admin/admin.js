@@ -313,11 +313,40 @@ async function adminAction(id, status, whatsapp, time = "", fee = "") {
     console.error("Admin action failed:", err);
   }
 }
+async function loadLobbyTimeFeeOptions() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+
+    const lobbies = await res.json();
+    const select = document.getElementById("lobbyTimeFeeSelect");
+    select.innerHTML = `<option value="">Select Time & Fee</option>`;
+
+    const added = new Set();
+
+    lobbies.forEach(lobby => {
+      const key = `${lobby.time}_${lobby.fee}`;
+      if (added.has(key)) return;
+
+      added.add(key);
+
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = `${lobby.time} | ₹${lobby.fee}`;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error("Failed to load lobby select", err);
+  }
+}
 
 /* ===============================
    INIT
 ================================ */
 loadRegistrations();
+loadLobbyTimeFeeOptions();
 loadLobbyLimits();
 loadLastReset();
 loadLobbies();
