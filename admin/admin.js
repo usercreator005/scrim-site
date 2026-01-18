@@ -155,7 +155,7 @@ async function adminAction(id, status, whatsapp) {
     });
     const regs = await res.json();
     const team = regs.find(r => r._id === id);
-
+   console.log(team);
     let msg =
 `🎮 SCRIM ACCEPTED ✅
 Team: ${team.teamName}
