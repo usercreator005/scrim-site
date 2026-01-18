@@ -27,7 +27,7 @@ async function saveLobbyConfig() {
   }
 
   try {
-    const res = await fetch(`${BACKEND_URL}/models/lobbyConfig`, {
+    const res = await fetch(`${BACKEND_URL}/models/LobbyConfig`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,7 +47,7 @@ async function saveLobbyConfig() {
 
 async function loadLobbyLimits() {
   try {
-    const res = await fetch(`${BACKEND_URL}/models/lobbyLimits`, {
+    const res = await fetch(`${BACKEND_URL}/models/LobbyLimit`, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
     const data = await res.json();
@@ -70,7 +70,7 @@ async function loadLobbyLimits() {
 
 async function updateLobbyLimit(id, value) {
   try {
-    const res = await fetch(`${BACKEND_URL}/models/lobbyLimits`, {
+    const res = await fetch(`${BACKEND_URL}/models/LobbyLimit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +117,7 @@ async function saveLobbyLink() {
 
 async function loadLobbies() {
   try {
-    const res = await fetch(`${BACKEND_URL}/models/lobbies`, {
+    const res = await fetch(`${BACKEND_URL}/models/Lobby`, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
     const lobbies = await res.json();
