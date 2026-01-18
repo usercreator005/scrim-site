@@ -19,7 +19,6 @@ async function saveLobbyConfig() {
   const fee = Number(document.getElementById("lobbyFee").value);
   const lobbyNo = Number(document.getElementById("lobbyNumber").value);
   const maxLobby = Number(document.getElementById("maxLobby").value);
-  const whatsappLink = document.getElementById("whatsappLink").value;
 
   if (!time || !fee || !lobbyNo || !maxLobby) {
     alert("Please fill all lobby fields");
@@ -33,12 +32,16 @@ async function saveLobbyConfig() {
         "Content-Type": "application/json",
         "x-admin-token": ADMIN_TOKEN
       },
-      body: JSON.stringify({ time, fee, lobbyNo, maxLobby, whatsappLink })
+      body: JSON.stringify({ time, fee, lobbyNo, maxLobby })
     });
 
     const data = await res.json();
     alert(data.message || "Lobby saved");
+
     loadLobbies();
+    loadLobbyLimits();
+    loadLobbyTimeFeeOptions();
+
   } catch (err) {
     console.error(err);
     alert("Failed to save lobby");
@@ -51,20 +54,24 @@ async function loadLobbyLimits() {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    const data = await res.json();
+    const json = await res.json();
+    const limits = Array.isArray(json) ? json : json.data || [];
+
     const container = document.getElementById("lobbyLimitsContainer");
     container.innerHTML = "";
 
-    data.forEach(limit => {
+    limits.forEach(limit => {
       const div = document.createElement("div");
+      div.style.marginBottom = "8px";
       div.innerHTML = `
-        Time: ${limit.time} | Fee: ₹${limit.fee}
-        | Max Lobby:
+        <b>${limit.time}</b> | ₹${limit.fee}
+        | Max Lobbies:
         <input type="number" value="${limit.maxLobby}" min="1"
           onchange="updateLobbyLimit('${limit._id}', this.value)">
       `;
       container.appendChild(div);
     });
+
   } catch (err) {
     console.error("Load lobby limits failed:", err);
   }
@@ -82,13 +89,19 @@ async function updateLobbyLimit(id, value) {
     });
 
     const data = await res.json();
-    alert(data.message);
+    alert(data.message || "Updated");
+
     loadLobbies();
+    loadLobbyTimeFeeOptions();
+
   } catch (err) {
     console.error("Update lobby limit failed:", err);
   }
 }
 
+/* ===============================
+   LOBBY LINK
+================================ */
 async function saveLobbyLink() {
   const select = document.getElementById("lobbyTimeFeeSelect");
   const link = document.getElementById("lobbyLinkInput").value.trim();
@@ -111,9 +124,11 @@ async function saveLobbyLink() {
     });
 
     const data = await res.json();
-    document.getElementById("lobbyLinkStatus").innerText = data.message;
+    document.getElementById("lobbyLinkStatus").innerText = data.message || "Saved";
+
     loadRegistrations();
     loadLobbies();
+
   } catch (err) {
     console.error(err);
     alert("Failed to save link");
@@ -121,7 +136,7 @@ async function saveLobbyLink() {
 }
 
 /* ===============================
-   LOBBY TABLE
+   LOBBY STATUS TABLE
 ================================ */
 async function loadLobbies() {
   try {
@@ -129,69 +144,37 @@ async function loadLobbies() {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    const lobbies = await res.json();
+    const json = await res.json();
+    const lobbies = Array.isArray(json) ? json : [];
+
     const tbody = document.getElementById("lobbyTable");
     tbody.innerHTML = "";
 
     lobbies.forEach(lobby => {
-      const TOTAL_SLOTS = lobby.maxLobby * 12;
-      const remaining = TOTAL_SLOTS - lobby.currentTeams;
+      const TOTAL = lobby.maxLobby * 12;
+      const remaining = TOTAL - lobby.currentTeams;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${lobby.time}</td>
         <td>₹${lobby.fee}</td>
         <td>${lobby.lobbyNo}</td>
-        <td>${lobby.maxLobby} Lobbies</td>
+        <td>${lobby.maxLobby}</td>
         <td>${lobby.currentTeams}</td>
         <td style="color:${remaining <= 0 ? 'red' : 'lightgreen'}">
           ${remaining <= 0 ? "FULL" : remaining}
         </td>
         <td>
-          <a href="${lobby.whatsappGroupLink || '#'}" target="_blank">
-            ${lobby.whatsappGroupLink ? "Open" : "N/A"}
-          </a>
+          ${lobby.whatsappGroupLink
+            ? `<a href="${lobby.whatsappGroupLink}" target="_blank">Open</a>`
+            : "N/A"}
         </td>
       `;
       tbody.appendChild(tr);
     });
+
   } catch (err) {
     console.error("Load lobbies failed", err);
-  }
-}
-
-/* ===============================
-   LAST RESET
-================================ */
-async function loadLastReset() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/admin/lastReset`, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
-    });
-
-    const data = await res.json();
-    document.getElementById("lastReset").innerText = data.lastReset || "Never";
-  } catch (err) {
-    console.error(err);
-    document.getElementById("lastReset").innerText = "Error";
-  }
-}
-
-async function manualReset() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/admin/manualReset`, {
-      method: "POST",
-      headers: { "x-admin-token": ADMIN_TOKEN }
-    });
-
-    const data = await res.json();
-    alert(data.message);
-    loadLastReset();
-    loadRegistrations();
-    loadLobbies();
-  } catch (err) {
-    console.error(err);
-    alert("Reset failed");
   }
 }
 
@@ -214,8 +197,10 @@ async function loadRegistrations() {
     const tbody = document.getElementById("adminTable");
     tbody.innerHTML = "";
 
-    // Pending
-    data.filter(r => r.status === "pending").forEach(reg => {
+    const pending = data.filter(r => r.status === "pending");
+    const accepted = data.filter(r => r.status === "accepted");
+
+    pending.forEach(reg => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${reg.teamName}</td>
@@ -225,17 +210,14 @@ async function loadRegistrations() {
         <td><a href="${BACKEND_URL}/uploads/${reg.screenshot}" target="_blank">View</a></td>
         <td>Pending</td>
         <td>
-          <button onclick="adminAction('${reg._id}','accepted','${reg.whatsapp}','${reg.time}','${reg.fee}')">Accept</button>
+          <button onclick="adminAction('${reg._id}','accepted','${reg.whatsapp}')">Accept</button>
           <button onclick="adminAction('${reg._id}','rejected','${reg.whatsapp}')">Reject</button>
         </td>
       `;
       tbody.appendChild(tr);
     });
 
-    // Accepted → Lobby view
-    const accepted = data.filter(r => r.status === "accepted");
     const groups = {};
-
     accepted.forEach(r => {
       const key = `${r.time}_${r.fee}`;
       if (!groups[key]) groups[key] = [];
@@ -243,24 +225,24 @@ async function loadRegistrations() {
     });
 
     Object.keys(groups).forEach(key => {
-      const teams = groups[key];
       const [time, fee] = key.split("_");
+      groups[key].forEach((team, i) => {
 
-      teams.forEach((team, index) => {
-        if (index % 12 === 0) {
-          const lobbyNo = Math.floor(index / 12) + 1;
+        if (i % 12 === 0) {
           const row = document.createElement("tr");
-          row.innerHTML = `<td colspan="7" style="background:#222;color:#ffcc00;text-align:center;font-weight:bold;">
-            Lobby ${lobbyNo} | ${time} | ₹${fee}
-          </td>`;
+          row.innerHTML = `
+            <td colspan="7" style="background:#222;color:#ffcc00;font-weight:bold">
+              Lobby ${Math.floor(i / 12) + 1} | ${time} | ₹${fee}
+            </td>`;
           tbody.appendChild(row);
         }
 
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7">${index % 12 + 1}. ${team.teamName}</td>`;
+        tr.innerHTML = `<td colspan="7">${(i % 12) + 1}. ${team.teamName}</td>`;
         tbody.appendChild(tr);
       });
     });
+
   } catch (err) {
     console.error("Admin load error:", err);
   }
@@ -269,7 +251,7 @@ async function loadRegistrations() {
 /* ===============================
    ADMIN ACTION
 ================================ */
-async function adminAction(id, status, whatsapp, time = "", fee = "") {
+async function adminAction(id, status, whatsapp) {
   try {
     await fetch(`${BACKEND_URL}/adminAction/${id}`, {
       method: "POST",
@@ -280,32 +262,6 @@ async function adminAction(id, status, whatsapp, time = "", fee = "") {
       body: JSON.stringify({ status })
     });
 
-    if (status === "accepted") {
-
-      // 🔥 get updated registration (with lobbyLink)
-      const res = await fetch(`${BACKEND_URL}/adminRegs`, {
-        headers: { "x-admin-token": ADMIN_TOKEN }
-      });
-      const regs = await res.json();
-      const team = regs.find(r => r._id === id);
-
-      let msg =
-`🎮 *SCRIM ACCEPTED* ✅
-
-👥 Team: ${team.teamName}
-🕒 Time: ${team.time}
-💰 Fee: ₹${team.fee}`;
-
-      if (team?.lobbyLink) {
-        msg += `\n\n🔗 Lobby Link:\n${team.lobbyLink}`;
-      }
-
-      window.open(
-        `https://wa.me/91${whatsapp}?text=${encodeURIComponent(msg)}`,
-        "_blank"
-      );
-    }
-
     loadRegistrations();
     loadLobbies();
 
@@ -313,6 +269,10 @@ async function adminAction(id, status, whatsapp, time = "", fee = "") {
     console.error("Admin action failed:", err);
   }
 }
+
+/* ===============================
+   DROPDOWN OPTIONS
+================================ */
 async function loadLobbyTimeFeeOptions() {
   try {
     const res = await fetch(`${BACKEND_URL}/admin/lobbies`, {
@@ -321,14 +281,13 @@ async function loadLobbyTimeFeeOptions() {
 
     const lobbies = await res.json();
     const select = document.getElementById("lobbyTimeFeeSelect");
-    select.innerHTML = `<option value="">Select Time & Fee</option>`;
 
+    select.innerHTML = `<option value="">Select Time & Fee</option>`;
     const added = new Set();
 
     lobbies.forEach(lobby => {
       const key = `${lobby.time}_${lobby.fee}`;
       if (added.has(key)) return;
-
       added.add(key);
 
       const opt = document.createElement("option");
@@ -341,12 +300,52 @@ async function loadLobbyTimeFeeOptions() {
     console.error("Failed to load lobby select", err);
   }
 }
+/* ===============================
+   LAST RESET
+================================ */
+async function loadLastReset() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/lastReset`, {
+      headers: {
+        "x-admin-token": ADMIN_TOKEN
+      }
+    });
 
+    const data = await res.json();
+    document.getElementById("lastReset").innerText =
+      data?.lastReset || "Never";
+
+  } catch (err) {
+    console.error("Load last reset failed:", err);
+    document.getElementById("lastReset").innerText = "Error";
+  }
+}
+
+async function manualReset() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/manualReset`, {
+      method: "POST",
+      headers: {
+        "x-admin-token": ADMIN_TOKEN
+      }
+    });
+
+    const data = await res.json();
+    alert(data.message || "Reset done");
+
+    loadLastReset();
+    loadRegistrations();
+    loadLobbies();
+
+  } catch (err) {
+    console.error("Manual reset failed:", err);
+    alert("Reset failed");
+  }
+}
 /* ===============================
    INIT
 ================================ */
 loadRegistrations();
-loadLobbyTimeFeeOptions();
-loadLobbyLimits();
-loadLastReset();
 loadLobbies();
+loadLobbyLimits();
+loadLobbyTimeFeeOptions();
