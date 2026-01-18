@@ -15,12 +15,11 @@ function logout() {
    LOBBY CONFIGURATION FUNCTIONS
 ================================ */
 async function saveLobbyConfig() {
-  const time = document.getElementById("lobbyTime").value;
-  const fee = Number(document.getElementById("lobbyFee").value);
-  const lobbyNo = Number(document.getElementById("lobbyNumber").value);
-  const maxTeams = Number(document.getElementById("maxTeams").value);
-  const whatsappLink = document.getElementById("whatsappLink").value;
-
+  const time = document.getElementById("createLobbyTime").value;
+const fee = Number(document.getElementById("createLobbyFee").value);
+const lobbyNo = Number(document.getElementById("createLobbyNo").value);
+const maxTeams = Number(document.getElementById("createMaxTeams").value);
+const whatsappLink = document.getElementById("createWpLink").value;
   if (!time || !fee || !lobbyNo || !maxTeams) {
     alert("Please fill all lobby fields");
     return;
