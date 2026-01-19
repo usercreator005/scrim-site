@@ -61,7 +61,7 @@ async function loadLobbies() {
         <td>${lobby.currentTeams || 0}</td>
         <td>${lobby.remainingTeams ?? "-"}</td>
         <td>
-          ${lobby.whatsappGroupLink
+          ${lobby.lobbyLink
             ? `<a href="${lobby.whatsappGroupLink}" target="_blank">Open</a>`
             : "N/A"}
         </td>
@@ -162,7 +162,7 @@ Team: ${team.teamName}
 Time: ${team.time}
 Fee: ₹${team.fee}`;
 
-    if (team.whatsappGroupLink) {
+    if (team.lobbyLink) {
   msg += `\n\n📲 WhatsApp Lobby Link:\n${team.whatsappGroupLink}`;
 }
     window.open(
